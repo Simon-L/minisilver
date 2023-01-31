@@ -10,7 +10,7 @@
    This is used to identify your plugin before a Plugin instance can be created.
    @note This macro is required.
  */
-#define DISTRHO_PLUGIN_NAME "ImGuiSimpleGain"
+#define DISTRHO_PLUGIN_NAME "__DPFLABEL__"
 
 /**
    Number of audio inputs the plugin has.
@@ -28,7 +28,7 @@
    The plugin URI when exporting in LV2 format.
    @note This macro is required.
  */
-#define DISTRHO_PLUGIN_URI "urn:distrho:examples:imguisimplegain"
+#define DISTRHO_PLUGIN_URI "__DPFURI__"
 
 /**
    Whether the plugin has a custom %UI.

@@ -12,9 +12,19 @@ START_NAMESPACE_DISTRHO
 
 // --------------------------------------------------------------------------------------------------------------------
 
-class ImGuiPluginUI : public UI
+class PluginUI : public UI
 {
+    enum Parameters {
+        kParamGain = 0,
+        kParamA,
+        kParamB,
+        kParamC,
+        kParamD,
+        kParamCount
+    };
+
     float fGain = 0.0f;
+    float fOutputParam = 0.0f;
     ResizeHandle fResizeHandle;
 
     // ----------------------------------------------------------------------------------------------------------------
@@ -24,7 +34,7 @@ public:
       UI class constructor.
       The UI should be initialized to a default state that matches the plugin side.
     */
-    ImGuiPluginUI()
+    PluginUI()
         : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT),
           fResizeHandle(this)
     {
@@ -45,10 +55,15 @@ protected:
     */
     void parameterChanged(uint32_t index, float value) override
     {
-        DISTRHO_SAFE_ASSERT_RETURN(index == 0,);
-
-        fGain = value;
-        repaint();
+        switch (index) {
+        case kParamGain:
+            fGain = value;
+            repaint();
+            return;
+        case kParamD:
+            fOutputParam = value;
+            return;
+        }
     }
 
     // ----------------------------------------------------------------------------------------------------------------
@@ -66,7 +81,7 @@ protected:
         ImGui::SetNextWindowPos(ImVec2(margin, margin));
         ImGui::SetNextWindowSize(ImVec2(width - 2 * margin, height - 2 * margin));
 
-        if (ImGui::Begin("Simple gain", nullptr, ImGuiWindowFlags_NoResize))
+        if (ImGui::Begin("__IMGUINAME__", nullptr, ImGuiWindowFlags_NoResize))
         {
             static char aboutText[256] = "This is a demo plugin made with ImGui.\n";
             ImGui::InputTextMultiline("About", aboutText, sizeof(aboutText));
@@ -74,27 +89,29 @@ protected:
             if (ImGui::SliderFloat("Gain (dB)", &fGain, -90.0f, 30.0f))
             {
                 if (ImGui::IsItemActivated())
-                    editParameter(0, true);
+                    editParameter(kParamGain, true);
 
-                setParameterValue(0, fGain);
+                setParameterValue(kParamGain, fGain);
             }
 
             if (ImGui::IsItemDeactivated())
             {
-                editParameter(0, false);
+                editParameter(kParamGain, false);
             }
+
+            ImGui::LabelText("<- OutputParam", "%f", fOutputParam);
         }
         ImGui::End();
     }
 
-    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ImGuiPluginUI)
+    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginUI)
 };
 
 // --------------------------------------------------------------------------------------------------------------------
 
 UI* createUI()
 {
-    return new ImGuiPluginUI();
+    return new PluginUI();
 }
 
 // --------------------------------------------------------------------------------------------------------------------

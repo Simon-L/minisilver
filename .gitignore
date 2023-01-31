@@ -1,5 +1,6 @@
 # build target dir
 /bin/
+/build/
 
 # cmake temp files that remain around
 CMakeFiles/

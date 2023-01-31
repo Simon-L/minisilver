@@ -32,10 +32,14 @@ START_NAMESPACE_DISTRHO
 
 // --------------------------------------------------------------------------------------------------------------------
 
-class ImGuiPluginDSP : public Plugin
+class PluginDSP : public Plugin
 {
     enum Parameters {
         kParamGain = 0,
+        kParamA,
+        kParamB,
+        kParamC,
+        kParamD,
         kParamCount
     };
 
@@ -49,69 +53,12 @@ public:
       Plugin class constructor.@n
       You must set all parameter values to their defaults, matching ParameterRanges::def.
     */
-    ImGuiPluginDSP()
+    PluginDSP()
         : Plugin(kParamCount, 0, 0) // parameters, programs, states
     {
     }
 
 protected:
-    // ----------------------------------------------------------------------------------------------------------------
-    // Information
-
-   /**
-      Get the plugin label.@n
-      This label is a short restricted name consisting of only _, a-z, A-Z and 0-9 characters.
-    */
-    const char* getLabel() const noexcept override
-    {
-        return "SimpleGain";
-    }
-
-   /**
-      Get an extensive comment/description about the plugin.@n
-      Optional, returns nothing by default.
-    */
-    const char* getDescription() const override
-    {
-        return "A simple audio volume gain plugin with ImGui for its GUI";
-    }
-
-   /**
-      Get the plugin author/maker.
-    */
-    const char* getMaker() const noexcept override
-    {
-        return "Jean Pierre Cimalando, falkTX";
-    }
-
-   /**
-      Get the plugin license (a single line of text or a URL).@n
-      For commercial plugins this should return some short copyright information.
-    */
-    const char* getLicense() const noexcept override
-    {
-        return "ISC";
-    }
-
-   /**
-      Get the plugin version, in hexadecimal.
-      @see d_version()
-    */
-    uint32_t getVersion() const noexcept override
-    {
-        return d_version(1, 0, 0);
-    }
-
-   /**
-      Get the plugin unique Id.@n
-      This value is used by LADSPA, DSSI and VST plugin formats.
-      @see d_cconst()
-    */
-    int64_t getUniqueId() const noexcept override
-    {
-        return d_cconst('d', 'I', 'm', 'G');
-    }
-
     // ----------------------------------------------------------------------------------------------------------------
     // Init
 
@@ -121,16 +68,21 @@ protected:
     */
     void initParameter(uint32_t index, Parameter& parameter) override
     {
-        DISTRHO_SAFE_ASSERT_RETURN(index == 0,);
-
-        parameter.ranges.min = -90.0f;
-        parameter.ranges.max = 30.0f;
-        parameter.ranges.def = -0.0f;
-        parameter.hints = kParameterIsAutomatable;
-        parameter.name = "Gain";
-        parameter.shortName = "Gain";
-        parameter.symbol = "gain";
-        parameter.unit = "dB";
+        switch (index) {
+        case kParamGain:
+            parameter.ranges.min = -90.0f;
+            parameter.ranges.max = 30.0f;
+            parameter.ranges.def = -0.0f;
+            parameter.hints = kParameterIsAutomatable;
+            parameter.name = "Gain";
+            parameter.shortName = "Gain";
+            parameter.symbol = "gain";
+            parameter.unit = "dB";
+            return;
+        case kParamD:
+            parameter.hints = kParameterIsOutput;
+            return;
+        }
     }
 
     // ----------------------------------------------------------------------------------------------------------------
@@ -142,9 +94,12 @@ protected:
     */
     float getParameterValue(uint32_t index) const override
     {
-        DISTRHO_SAFE_ASSERT_RETURN(index == 0, 0.0f);
-
-        return fGainDB;
+        switch (index) {
+        case kParamD:
+            return 0.314f;
+        case kParamGain:
+            return fGainDB;
+        }
     }
 
    /**
@@ -155,10 +110,12 @@ protected:
     */
     void setParameterValue(uint32_t index, float value) override
     {
-        DISTRHO_SAFE_ASSERT_RETURN(index == 0,);
-
-        fGainDB = value;
-        fGainLinear = DB_CO(CLAMP(value, -90.0, 30.0));
+        switch (index) {
+        case kParamGain:
+            fGainDB = value;
+            fGainLinear = DB_CO(CLAMP(value, -90.0, 30.0));
+            return;
+        }
     }
 
     // ----------------------------------------------------------------------------------------------------------------
@@ -210,15 +167,47 @@ protected:
     }
 
     // ----------------------------------------------------------------------------------------------------------------
+    
+    // Information
+    /**
+       Get the plugin label.@n
+       This label is a short restricted name consisting of only _, a-z, A-Z and 0-9 characters.
+     */
+     const char* getLabel() const noexcept override {return "__DPFLABEL__";}
+    /**
+       Get an extensive comment/description about the plugin.@n
+       Optional, returns nothing by default.
+     */
+     const char* getDescription() const override {return "__DPFDESCRIPTION__";}
+    /**
+       Get the plugin author/maker.
+     */
+     const char* getMaker() const noexcept override {return "Jean Pierre Cimalando, falkTX, __YOURNAME__";}
+    /**
+       Get the plugin license (a single line of text or a URL).@n
+       For commercial plugins this should return some short copyright information.
+     */
+     const char* getLicense() const noexcept override {return "ISC";}
+    /**
+       Get the plugin version, in hexadecimal.
+       @see d_version()
+     */
+     uint32_t getVersion() const noexcept override {return d_version(1, 0, 0);}
+    /**
+       Get the plugin unique Id.@n
+       This value is used by LADSPA, DSSI and VST plugin formats.
+       @see d_cconst()
+     */
+     int64_t getUniqueId() const noexcept override {return d_cconst('a', 'b', 'c', 'd');}
 
-    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ImGuiPluginDSP)
+    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginDSP)
 };
 
 // --------------------------------------------------------------------------------------------------------------------
 
 Plugin* createPlugin()
 {
-    return new ImGuiPluginDSP();
+    return new PluginDSP();
 }
 
 // --------------------------------------------------------------------------------------------------------------------
