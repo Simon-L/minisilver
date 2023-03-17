@@ -41,7 +41,7 @@ void PluginUI::onImGuiDisplay()
 
     if (ImGui::Begin("__IMGUINAME__", nullptr, ImGuiWindowFlags_NoResize))
     {
-        static char aboutText[256] = "This is a demo plugin made with ImGui.\n";
+        static char aboutText[256] = "This is a demo plugin made with ImGui,\ndemoing direct DSP instance access from the GUI\n(you should avoid doing this!).\nClick the button below to call\nthe method on the current DSP instance.\n";
         ImGui::InputTextMultiline("About", aboutText, sizeof(aboutText));
 
         if (ImGui::SliderFloat("Gain (dB)", &fGain, -90.0f, 30.0f))

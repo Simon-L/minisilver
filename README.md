@@ -1,5 +1,12 @@
 # DPF + ImGui template plugin project
 
+> :warning: You're on the directaccess branch!
+>
+> This branch shows how to use direct access to the Plugin instance from the GUI, code refactored into separate .hpp/.cpp  
+> :rotating_light: **No realtime and access safety, bring your own!**
+
+![screenshot](./Screenshot.png)
+
 This repository contains an example audio plugin project using DPF and ImGui.
 
 `git clone --recursive https://github.com/Simon-L/imgui-template-plugin my-cool-plugin`
