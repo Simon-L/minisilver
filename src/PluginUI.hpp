@@ -29,6 +29,10 @@ class PluginUI : public UI
     float fOutputParam = 0.0f;
     ResizeHandle fResizeHandle;
 
+    bool showDemo = false;
+
+    ImFont* font1;
+    
     // ----------------------------------------------------------------------------------------------------------------
 
 public:
@@ -36,8 +40,8 @@ public:
       UI class constructor.
       The UI should be initialized to a default state that matches the plugin side.
     */
-    PluginUI();
-    ~PluginUI();
+  PluginUI();
+  ~PluginUI();
 
 protected:
     // ----------------------------------------------------------------------------------------------------------------
@@ -47,7 +51,7 @@ protected:
       A parameter has changed on the plugin side.@n
       This is called by the host to inform the UI about parameter changes.
     */
-    void parameterChanged(uint32_t index, float value) override;
+  void parameterChanged(uint32_t index, float value) override;
 
     // ----------------------------------------------------------------------------------------------------------------
     // Widget Callbacks
@@ -55,10 +59,10 @@ protected:
    /**
       ImGui specific onDisplay function.
     */
-    void onImGuiDisplay() override;
+  void onImGuiDisplay() override;
 
 
-    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginUI)
+  DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginUI)
 };
 
 END_NAMESPACE_DISTRHO

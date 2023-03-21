@@ -58,11 +58,8 @@ void PluginDSP::activate()
     fSmoothGain->flush();
 }
 
-void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames)
+void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, const MidiEvent* midiEvents, uint32_t midiEventCount)
 {
-    // get the left and right audio inputs
-    const float* const inpL = inputs[0];
-    const float* const inpR = inputs[1];
 
     // get the left and right audio outputs
     float* const outL = outputs[0];
@@ -72,8 +69,8 @@ void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames)
     for (uint32_t i=0; i < frames; ++i)
     {
         const float gain = fSmoothGain->process(fGainLinear);
-        outL[i] = inpL[i] * gain;
-        outR[i] = inpR[i] * gain;
+        outL[i] = 0.0 * gain;
+        outR[i] = 0.0 * gain;
     }
 }
 
@@ -87,13 +84,6 @@ int PluginDSP::publicMethod()
 {
     return 42;
 }
-
-const char* PluginDSP::getLabel() const noexcept {return "__DPFLABEL__";}
-const char* PluginDSP::getDescription() const {return "__DPFDESCRIPTION__";}
-const char* PluginDSP::getLicense() const noexcept {return "ISC";}
-const char* PluginDSP::getMaker() const noexcept {return "Jean Pierre Cimalando, falkTX, __YOURNAME__";}
-uint32_t PluginDSP::getVersion() const noexcept {return d_version(1, 0, 0);}
-int64_t PluginDSP::getUniqueId() const noexcept {return d_cconst('a', 'b', 'c', 'd');}
 
 // --------------------------------------------------------------------------------------------------------------------
 
