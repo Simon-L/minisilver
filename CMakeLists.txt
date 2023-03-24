@@ -23,6 +23,7 @@ dpf_add_plugin(${NAME}
       implot/implot.cpp
       implot/implot_demo.cpp
       implot/implot_items.cpp
+      imgui-knobs/imgui-knobs.cpp
       dpf-widgets/opengl/DearImGui.cpp)
 
 target_include_directories(${NAME} PUBLIC src)
@@ -30,6 +31,8 @@ target_include_directories(${NAME} PUBLIC dpf-widgets/generic)
 target_include_directories(${NAME} PUBLIC dpf-widgets/opengl)
 target_include_directories(${NAME} PUBLIC dpf-widgets/opengl/DearImGui)
 target_include_directories(${NAME} PUBLIC implot)
+target_include_directories(${NAME} PUBLIC imgui-knobs)
+target_include_directories(${NAME} PUBLIC lunasvg)
 target_include_directories(${NAME} PUBLIC chowdsp_utils/modules/dsp)
 target_include_directories(${NAME} PUBLIC chowdsp_wdf/include)
 target_include_directories(${NAME} PUBLIC sst-filters/include)
@@ -51,3 +54,6 @@ target_link_libraries(${NAME} PRIVATE chowdsp_lib)
 
 add_subdirectory(sst-filters)
 target_link_libraries(${NAME} PUBLIC sst-filters)
+
+add_subdirectory(lunasvg)
+target_link_libraries(${NAME} PUBLIC lunasvg)
