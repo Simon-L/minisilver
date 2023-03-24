@@ -16,3 +16,9 @@
 [submodule "chowdsp_wdf"]
 	path = chowdsp_wdf
 	url = https://github.com/Chowdhury-DSP/chowdsp_wdf
+[submodule "lunasvg"]
+	path = lunasvg
+	url = https://github.com/sammycage/lunasvg
+[submodule "imgui-knobs"]
+	path = imgui-knobs
+	url = https://github.com/altschuler/imgui-knobs
