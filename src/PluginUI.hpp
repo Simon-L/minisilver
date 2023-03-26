@@ -75,7 +75,8 @@ class PluginUI : public UI
     // ----------------------------------------------------------------------------------------------------------------
     // Widget Callbacks
 
-    void showLogo();
+    void generateLogo();
+    void showMenuBar();
 
     /**
       ImGui specific onDisplay function.
