@@ -46,6 +46,10 @@ class PluginUI : public UI
     std::unique_ptr<ImGuiKnobsSVG::Knob> k2;
     std::unique_ptr<ImGuiKnobsSVG::Knob> k3;
     std::unique_ptr<ImGuiKnobsSVG::Knob> k4;
+
+    GLuint logo_tex;
+    float logo_width = 0.47;
+    float base_dimension;
     // ----------------------------------------------------------------------------------------------------------------
 
     public:
@@ -70,6 +74,8 @@ class PluginUI : public UI
 
     // ----------------------------------------------------------------------------------------------------------------
     // Widget Callbacks
+
+    void showLogo();
 
     /**
       ImGui specific onDisplay function.

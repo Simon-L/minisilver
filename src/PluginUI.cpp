@@ -44,15 +44,43 @@ void PluginUI::parameterChanged(uint32_t index, float value)
     }
 }
 
+void PluginUI::showLogo() {
+    auto logo_document = lunasvg::Document::loadFromFile("res/logo.svg");
+    if(!logo_document) {
+        d_stdout("Logo document error");
+        return; 
+    }
+    base_dimension = ImGui::GetWindowWidth() * logo_width;
+    auto bitmap = lunasvg::Bitmap(base_dimension, base_dimension / 11.0);
+    bitmap.clear(0x00000000);
+    d_stdout("logo_document %f %f", logo_document->width(), logo_document->height());
+
+    logo_document->setMatrix(logo_document->matrix().scale(base_dimension/logo_document->width(), (base_dimension / 11.0)/logo_document->height()));
+    logo_document->render(bitmap);
+    if(!bitmap.valid()) {
+        d_stdout("Logo bitmap error");
+        return; 
+    }
+
+    bitmap.convertToRGBA();
+    d_stdout("bitmap %d %d", bitmap.width(), bitmap.height());
+
+    glGenTextures(1, &logo_tex);
+    glBindTexture(GL_TEXTURE_2D, logo_tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, base_dimension, base_dimension/11.0, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap.data());
+}
+
 void PluginUI::onImGuiDisplay()
 {   
 
     const float width = getWidth();
     const float height = getHeight();
-    const float margin = 2.0f * getScaleFactor();
 
-    ImGui::SetNextWindowPos(ImVec2(margin, margin));
-    ImGui::SetNextWindowSize(ImVec2(width - 2 * margin, height - 2 * margin));
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(width, height));
 
     ImGui::PushFont(font1);
     if (k1 == nullptr) {
@@ -61,14 +89,34 @@ void PluginUI::onImGuiDisplay()
         k2 = std::make_unique<ImGuiKnobsSVG::Knob>("res/WDR-8_SmallKnob.svg", ImGuiKnobVariant_WiperOnly, &v2, 0.0f, 10.0f);
         k2->setBg("res/WDR-8_SmallKnob_Orange_bg.svg");
         k3 = std::make_unique<ImGuiKnobsSVG::Knob>("res/Rogan1PSRed.svg", ImGuiKnobVariant_WiperOnly, &v3, 0.0f, 10.0f);
-        k3->setFg("res/Rogan1PSRed_fg.svg"); 
-        k3->setBg("res/Rogan1PS_bg.svg"); 
+        k3->setFg("res/Rogan1PSRed_fg.svg");
+        k3->setBg("res/Rogan1PS_bg.svg");
         k4 = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_8.svg", ImGuiKnobVariant_WiperDot, &v4, -12.0f, 12.0f, 100);
-        k4->setBg("res/303Knob_0_8_bg.svg"); 
+        k4->setBg("res/303Knob_0_8_bg.svg");
+        showLogo();
     }
 
-    if (ImGui::Begin("Mini Silver", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse))
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(ImGui::GetStyle().FramePadding.x, 6.0));
+    if (ImGui::Begin("Mini Silver", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_MenuBar))
     {   
+        if (ImGui::BeginMenuBar()) {
+            float menu_height = (6.0 + 6.0 + ImGui::GetTextLineHeight());
+            float logo_height = (base_dimension / 11.0);
+            float toply = (menu_height - logo_height) * 0.5;
+            auto topl = ImVec2(ImGui::GetStyle().FramePadding.x, std::round(toply));
+            auto botr = ImVec2(topl.x + base_dimension, topl.y + base_dimension / 11.0);
+            ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)logo_tex, topl, botr);
+            float button_x = width;
+            button_x -= ImGui::GetStyle().FramePadding.x * 5;
+            button_x -= ImGui::CalcTextSize("About").x;
+            button_x -= ImGui::GetStyle().ItemSpacing.x;
+            button_x -= ImGui::CalcTextSize("Tweaks").x;
+            ImGui::SetCursorPosX(button_x);
+            ImGui::SmallButton("Tweaks");
+            ImGui::SmallButton("About");
+            ImGui::EndMenuBar();
+        }
+        ImGui::PopStyleVar();
 
         if (ImGuiKnobs::Knob("Befaco Big Knob", &v1, -6.0f, 6.0f, 0.1f, "%.1fdB", ImGuiKnobVariant_Stepped, 100)) {
             // v1 was changed
@@ -99,9 +147,8 @@ void PluginUI::onImGuiDisplay()
         }
         k4->paint();
 
-        // ImGui::Checkbox("Show demo window", &showDemo);
-        // if (showDemo) ImGui::ShowDemoWindow(&showDemo);
-        // ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImGui::GetColorU32(ImVec4(1.0, 0.0, 0.0, 1.0)));
+        ImGui::Checkbox("Show demo window", &showDemo);
+        if (showDemo) ImGui::ShowDemoWindow(&showDemo);
     }
     ImGui::PopFont();
     ImGui::End();
