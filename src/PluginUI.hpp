@@ -37,19 +37,29 @@ class PluginUI : public UI
 
     ImFont* font1;
 
-    float v1 = 0;
-    float v2 = 0;
-    float v3 = 0;
-    float v4 = 0;
+    float v_cutoff = 0;
+    float v_resonance = 0;
+    float v_envmod = 0;
+    float v_decay = 0;
+    float v_accent = 0;
+    float v_tuning = 0;
+    float v_vcadecay = 0;
 
-    std::unique_ptr<ImGuiKnobsSVG::Knob> k1;
-    std::unique_ptr<ImGuiKnobsSVG::Knob> k2;
-    std::unique_ptr<ImGuiKnobsSVG::Knob> k3;
-    std::unique_ptr<ImGuiKnobsSVG::Knob> k4;
+    int wfm = 0;
+
+    std::unique_ptr<ImGuiKnobsSVG::Knob> cutoff_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> resonance_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> envmod_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> decay_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> accent_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> tuning_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> vcadecay_knob;
 
     GLuint logo_tex;
     float logo_width = 0.47;
     float base_dimension;
+
+    char decayDisplayString[16];
     // ----------------------------------------------------------------------------------------------------------------
 
     public:
@@ -71,6 +81,29 @@ class PluginUI : public UI
     void parameterChanged(uint32_t index, float value) override;
 
     // Helpers
+    // ----------------------------------------------------------------------------------------------------------------
+
+    char* setTimeDisplayValueString(float v)
+    {
+        auto time = pow(2.0, v);
+        if (time < 1)
+            std::sprintf(decayDisplayString, "%6.1fms", time * 1000);
+        else
+            std::sprintf(decayDisplayString, "%6.3fs", time);
+        return decayDisplayString;
+    }
+
+    inline float linear(float x, float lo_bp, float hi_bp, float lo_y, float hi_y) {
+        float Xmapping = 1.0f/(hi_bp - lo_bp);
+        float mappedX = Xmapping * (x - lo_bp);
+        return (hi_y - lo_y) * mappedX + lo_y;
+    }
+
+    float paramLog(float x, float bpx, float bpy, float min, float max) {
+        float bpy_mapped = (max - min) * bpy + min;
+        if (x < bpx) return linear(x, 0.0f, bpx, min, bpy_mapped);
+        else return linear(x, bpx, 1.0f, bpy_mapped, max);
+    }
 
     // ----------------------------------------------------------------------------------------------------------------
     // Widget Callbacks

@@ -89,10 +89,11 @@ void PluginUI::showMenuBar()
         button_x -= ImGui::CalcTextSize("Tweaks").x;
         ImGui::SetCursorPosX(button_x);
         ImGui::SmallButton("Tweaks");
+        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::IsPopupOpen("aboutpopup") ? Accent : ImGui::GetStyle().Colors[ImGuiCol_Button]);
         if (ImGui::SmallButton("About")) {
-            d_stdout("Popup!");
             ImGui::OpenPopup("aboutpopup");
         }
+        ImGui::PopStyleColor();
         ImVec2 popupSize;
         popupSize.x = getWidth() * 0.8;
         popupSize.y = (getHeight() - menu_height) * 0.95;
@@ -106,10 +107,10 @@ void PluginUI::showMenuBar()
             ImGui::Text("Digital Roland TB-303 clone");
             ImGui::Text("\n");
             ImGui::Text("Based on hundreds of contributions, either code, text, images, suggestions, thoughts from\n");
-            ImGui::Text("developers, musicians and forum lurker over at the KVR forum, on various blogs\n");
+            ImGui::Text("developers, musicians and forum members over at the KVR forum, on various blogs\n");
             ImGui::Text("and on the Adafruit x0xb0x forum.\n");
             ImGui::Text("A definitive source of information was the Open303 project by Robin Schmidt, initiated in a KVR thread\n");
-            ImGui::Text("back in 2009 and used as a reference for many aspects in this clone.   \n");
+            ImGui::Text("back in 2009 and used as a reference for many aspects in this clone.\n");
             ImGui::Text("Informed by tens of articles and blog posts, the x0xd0x wiki on x0xb0x at ladyada.net.\n");
             ImGui::Text("See full acknowledgments at https://synthe.tiseur.fr/opensilver\n");
             ImGui::Text("\n");
@@ -117,8 +118,6 @@ void PluginUI::showMenuBar()
             ImGui::Text("verbatim in the code.\n");
             ImGui::Text("Thanks to:\n");
             ImGui::Text("Robin Schmidt, guest, aciddose ...\n");
-            // ImGui::SmallButton("Blabla");
-            // ImGui::SmallButton("Blublu");
             ImGui::EndPopup();
         }
         ImGui::EndMenuBar();
@@ -135,16 +134,19 @@ void PluginUI::onImGuiDisplay()
     ImGui::SetNextWindowSize(ImVec2(width, height));
 
     ImGui::PushFont(font1);
-    if (k1 == nullptr) {
-        k1 = std::make_unique<ImGuiKnobsSVG::Knob>("res/BefacoBigKnob.svg", ImGuiKnobVariant_Stepped, &v1, -6.0f, 6.0f, 100);
-        k1->setBg("res/BefacoBigKnob_bg.svg");
-        k2 = std::make_unique<ImGuiKnobsSVG::Knob>("res/WDR-8_SmallKnob.svg", ImGuiKnobVariant_WiperOnly, &v2, 0.0f, 10.0f);
-        k2->setBg("res/WDR-8_SmallKnob_Orange_bg.svg");
-        k3 = std::make_unique<ImGuiKnobsSVG::Knob>("res/Rogan1PSRed.svg", ImGuiKnobVariant_WiperOnly, &v3, 0.0f, 10.0f);
-        k3->setFg("res/Rogan1PSRed_fg.svg");
-        k3->setBg("res/Rogan1PS_bg.svg");
-        k4 = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_8.svg", ImGuiKnobVariant_WiperDot, &v4, -12.0f, 12.0f, 100);
-        k4->setBg("res/303Knob_0_8_bg.svg");
+    if (cutoff_knob == nullptr) {
+        cutoff_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_8.svg", ImGuiKnobVariant_Stepped, &v_cutoff, 0.0f, 1.0f, 100);
+        cutoff_knob->setBg("res/303Knob_0_8_bg.svg");
+        resonance_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_resonance, 0.0f, 1.0f, 100);
+        resonance_knob->setBg("res/303Knob_0_4_bg.svg");
+        envmod_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_envmod, 0.0f, 1.0f, 100);
+        envmod_knob->setBg("res/303Knob_0_4_bg.svg");
+        decay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_decay, -2.223, 1.223, 100);
+        decay_knob->setBg("res/303Knob_0_4_bg.svg");
+        accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_accent, 0.0f, 1.0f, 100);
+        accent_knob->setBg("res/303Knob_0_4_bg.svg");
+        tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &v_tuning, -1.0f, 1.0f);
+        vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &v_vcadecay, -1.0f, 1.0f);
         generateLogo();
     }
 
@@ -155,34 +157,90 @@ void PluginUI::onImGuiDisplay()
         showMenuBar();
         ImGui::PopStyleVar();
 
-        if (ImGuiKnobs::Knob("Befaco Big Knob", &v1, -6.0f, 6.0f, 0.1f, "%.1fdB", ImGuiKnobVariant_Stepped, 100)) {
-            // v1 was changed
+        if (ImGuiKnobs::Knob("CUT OFF FREQ", &v_cutoff, 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            // v_cutoff was changed
+            d_stdout("CUT OFF FREQ %f -> %f", v_cutoff, paramLog(v_cutoff, 0.5f, 0.1f, 0.85, 7.4));
         }
-        k1->paint();
+        cutoff_knob->paint();
         ImGui::SameLine();
 
-        if (ImGuiKnobs::Knob("WDR-8", &v2, 0.0f, 10.0f, 0.02f, "%.1f", ImGuiKnobVariant_WiperOnly, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
-            // v2 was changed
+        if (ImGuiKnobs::Knob("RESONANCE", &v_resonance, 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            // 
         }
-        k2->paint();
+        resonance_knob->paint();
+        ImGui::SameLine();
 
-        auto acidKnob = ImGui::GetItemRectMin();
-        acidKnob.x += ImGui::GetItemRectSize().x + ImGui::GetStyle().ItemSpacing.x;
-
-        auto trim2 = ImGui::GetItemRectMax();
-        trim2.x -= ImGui::GetItemRectSize().x;
-        trim2.y += ImGui::GetStyle().ItemSpacing.y;
-        ImGui::SetCursorPos(trim2);
-        if (ImGuiKnobs::Knob("Rogan 3P", &v3, 0.0f, 10.0f, 0.1f, "%.1f", ImGuiKnobVariant_WiperOnly, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
-            // v3 was changed
+        if (ImGuiKnobs::Knob("ENV MOD", &v_envmod, 0.0f, 1.0f, 0.003f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            // 
+            d_stdout("ENV MOD %f -> %f", v_envmod, paramLog(v_envmod, 0.5f, 0.1f, 0.25, 0.887));
         }
-        k3->paint();
+        envmod_knob->paint();
+        ImGui::SameLine();
 
-        ImGui::SetCursorPos(acidKnob);
-        if (ImGuiKnobs::Knob("Acid Knob", &v4, -12.0f, 12.0f, 0.05f, "%.1f", ImGuiKnobVariant_WiperDot, 100)) {
-            // v4 was changed
+        if (ImGuiKnobs::Knob("DECAY", &v_decay, -2.223, 1.223, 0.01f, setTimeDisplayValueString(v_decay), ImGuiKnobVariant_Stepped, 100)) {
+            // 
         }
-        k4->paint();
+        decay_knob->paint();
+        ImGui::SameLine();
+
+        if (ImGuiKnobs::Knob("ACCENT", &v_accent, 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            // 
+        }
+        accent_knob->paint();
+        auto next_line = ImGui::GetCursorPos();
+        ImGui::SameLine();
+
+        auto wfm_topl = ImGui::GetCursorPos();
+        auto hold_topl = ImGui::GetCursorPos();
+        int but_w = 80;
+        int but_h = 40;
+        auto title_size = ImGui::CalcTextSize("HOLD VCA", NULL, false, width);
+        hold_topl.y += title_size.y;
+        hold_topl.y += (50 - but_h) * 0.5;
+        hold_topl.y += ImGui::GetStyle().ItemSpacing.y;
+        ImGui::BeginGroup();
+        ImGui::GetCurrentWindow()->DC.CurrLineTextBaseOffset = 0;
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (but_w - title_size[0]) * 0.5f);
+        ImGui::Text("%s", "HOLD VCA");
+        ImGui::SetCursorPos(hold_topl);
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, Accent);
+        ImGui::Button("##hold", ImVec2(but_w, but_h));
+        ImGui::PopStyleColor();
+        ImGui::EndGroup();
+
+        wfm_topl.x += but_w + ImGui::GetStyle().ItemSpacing.x;
+        ImGui::SetCursorPos(wfm_topl);
+
+        ImGui::BeginGroup();
+        ImGui::Text("%s", "WAVEFORM");
+        float wfm_slider_y = ImGui::GetStyle().FrameBorderSize * 2 + ImGui::GetStyle().FramePadding.y * 2 + ImGui::GetTextLineHeight();
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (50 - wfm_slider_y) * 0.5);
+        ImGui::SetNextItemWidth(but_w);
+        ImGui::SliderInt("##waveforum", &wfm, 0, 1, wfm ? "PULSE" : "SAW", ImGuiSliderFlags_NoInput);
+        ImGui::EndGroup();
+
+        auto tuning_topl = hold_topl;
+        tuning_topl.y += but_h + ImGui::GetStyle().ItemSpacing.y;
+        tuning_topl.x += (but_w - 64) * 0.5;
+        ImGui::SetCursorPos(tuning_topl);
+        if (ImGuiKnobs::Knob("TUNING", &v_tuning, -1.0f, 1.0f, 0.01f, "%.3f", ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
+            // 
+        }
+        tuning_knob->paint();
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(wfm_topl.x + (but_w - 64) * 0.5);
+        if (ImGuiKnobs::Knob("VCA DEC", &v_vcadecay, -1.0f, 1.0f, 0.01f, "%.3f", ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
+            // 
+        }
+        vcadecay_knob->paint();
+
+        ImGui::SetCursorPos(next_line);
+
+        ImGui::Spacing();
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+        ImGui::Spacing();
 
         ImGui::Checkbox("Show demo window", &showDemo);
         if (showDemo) ImGui::ShowDemoWindow(&showDemo);
