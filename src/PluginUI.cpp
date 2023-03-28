@@ -207,12 +207,18 @@ void PluginUI::onImGuiDisplay()
         ImGui::Text("%s", "HOLD VCA");
         ImGui::SetCursorPos(hold_topl);
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, Accent);
+        ImGui::PushStyleColor(ImGuiCol_Button, v_holdvca > 0.5f ? Accent : ImGui::GetStyle().Colors[ImGuiCol_Button]);
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, v_holdvca > 0.5f ? Accent : ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
         if (ImGui::Button("##hold", ImVec2(but_w, but_h))) {
-            d_stdout("Hold released!");
+            v_holdvca = 0.0;
+            setParameterValue(kHoldVca, v_holdvca);
         }
         if (ImGui::IsItemClicked()) {
-            d_stdout("Hold clicked!");
+            v_holdvca = 1.0;
+            setParameterValue(kHoldVca, v_holdvca);
         }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor();
         ImGui::PopStyleColor();
         ImGui::EndGroup();
 
