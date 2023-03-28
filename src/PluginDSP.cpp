@@ -11,45 +11,9 @@ START_NAMESPACE_DISTRHO
 PluginDSP::PluginDSP()
     : Plugin(kParamCount, 0, 0) // parameters, programs, states
 {
-}
-
-void PluginDSP::initParameter(uint32_t index, Parameter& parameter)
-{
-    switch (index) {
-    case kParamGain:
-        parameter.ranges.min = -90.0f;
-        parameter.ranges.max = 30.0f;
-        parameter.ranges.def = -0.0f;
-        parameter.hints = kParameterIsAutomatable;
-        parameter.name = "Gain";
-        parameter.shortName = "Gain";
-        parameter.symbol = "gain";
-        parameter.unit = "dB";
-        return;
-    case kParamD:
-        parameter.hints = kParameterIsOutput;
-        return;
-    }
-}
-
-float PluginDSP::getParameterValue(uint32_t index) const
-{
-    switch (index) {
-    case kParamD:
-        return 0.314f;
-    case kParamGain:
-        return fGainDB;
-    }
-    return 0.0;
-}
-
-void PluginDSP::setParameterValue(uint32_t index, float value)
-{
-    switch (index) {
-    case kParamGain:
-        fGainDB = value;
-        fGainLinear = DB_CO(CLAMP(value, -90.0, 30.0));
-        return;
+    for (int i = 0; i < kParamCount; ++i)
+    {
+        d_stdout("DSP %d -> %s (%s)", i, params.properties[i].name.buffer(), params.properties[i].symbol.buffer());
     }
 }
 

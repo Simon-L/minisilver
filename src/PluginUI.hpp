@@ -20,14 +20,6 @@ START_NAMESPACE_DISTRHO
 
 class PluginUI : public UI
 {
-    enum Parameters {
-        kParamGain = 0,
-        kParamA,
-        kParamB,
-        kParamC,
-        kParamD,
-        kParamCount
-    };
 
     float fGain = 0.0f;
     float fOutputParam = 0.0f;
@@ -42,10 +34,10 @@ class PluginUI : public UI
     float v_envmod = 0;
     float v_decay = 0;
     float v_accent = 0;
+    float v_holdvca = 0;
+    int v_waveform = 0;
     float v_tuning = 0;
     float v_vcadecay = 0;
-
-    int wfm = 0;
 
     std::unique_ptr<ImGuiKnobsSVG::Knob> cutoff_knob;
     std::unique_ptr<ImGuiKnobsSVG::Knob> resonance_knob;
@@ -60,6 +52,8 @@ class PluginUI : public UI
     float base_dimension;
 
     char decayDisplayString[16];
+
+    MiniSilverParameters params;
     // ----------------------------------------------------------------------------------------------------------------
 
     public:

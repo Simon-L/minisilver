@@ -18,6 +18,7 @@ dpf_add_plugin(${NAME}
   FILES_DSP
       src/PluginDSP.cpp
       src/PluginDSP_metadata.cpp
+      src/PluginDSP_parameters.cpp
   FILES_UI
       src/PluginUI.cpp
       implot/implot.cpp
