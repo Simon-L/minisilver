@@ -24,6 +24,9 @@ void PluginDSP::setParameterValue(uint32_t index, float value)
 {
     d_stdout("DSP %d %s -> %f", index, params.properties[index].name.buffer(), value);
     params.values[index] = value;
-    // if (index == foobar) 
-        // jdjdjd
+    if (index == kCutoff)
+        d_stdout("\tDSP CUT OFF FREQ -> %f", paramLog(params.values[kCutoff], cutoffLogBpX, cutoffLogBpY, cutoffLogMin, cutoffLogMax));
+    if (index == kEnvMod)
+        d_stdout("\tDSP ENV MOD FREQ -> %f", paramLog(params.values[kEnvMod], envModLogBpX, envModLogBpY, envModLogMin, envModLogMax));
+
 }

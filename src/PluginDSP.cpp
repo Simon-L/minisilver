@@ -19,7 +19,7 @@ PluginDSP::PluginDSP()
 
 void PluginDSP::activate()
 {
-    fSmoothGain->flush();
+    // fSmoothGain->flush();
 }
 
 void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, const MidiEvent* midiEvents, uint32_t midiEventCount)
@@ -32,16 +32,15 @@ void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, cons
     // apply gain against all samples
     for (uint32_t i=0; i < frames; ++i)
     {
-        const float gain = fSmoothGain->process(fGainLinear);
-        outL[i] = 0.0 * gain;
-        outR[i] = 0.0 * gain;
+        outL[i] = 0.0;
+        outR[i] = 0.0;
     }
 }
 
 void PluginDSP::sampleRateChanged(double newSampleRate)
 {
     fSampleRate = newSampleRate;
-    fSmoothGain->setSampleRate(newSampleRate);
+    // fSmoothGain->setSampleRate(newSampleRate);
 }
 
 int PluginDSP::publicMethod()

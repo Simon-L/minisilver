@@ -37,9 +37,7 @@ START_NAMESPACE_DISTRHO
 class PluginDSP : public Plugin
 {
     double fSampleRate = getSampleRate();
-    float fGainDB = 0.0f;
-    float fGainLinear = 1.0f;
-    std::unique_ptr<CParamSmooth> fSmoothGain = std::make_unique<CParamSmooth>(20.0f, fSampleRate);
+    // std::unique_ptr<CParamSmooth> fSmoothGain = std::make_unique<CParamSmooth>(20.0f, fSampleRate);
 
     MiniSilverParameters params;
 
