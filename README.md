@@ -2,7 +2,7 @@
 
 > :warning: WIP! Put a limiter on the output! There are known bugs causing high volume!
 
-![screenshot](./Screenshot.png)
+![screenshot](./doc/Screenshot.png)
 
 ## Building
 
