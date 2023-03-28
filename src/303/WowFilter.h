@@ -7,7 +7,7 @@ struct WowFilter {
 
 	wdft::ResistorT<double> Rpot { (1 - R) * 50.0e3 };
 	wdft::ResistorT<double> Rin { 47e3 + R * 50.0e3 };
-	wdft::CapacitorT<double> C1 { 1e-6 };
+	wdft::CapacitorT<double> C1 { 1.65e-6 };
 
 	wdft::ResistorT<double> Rout { 102e3 };
 	

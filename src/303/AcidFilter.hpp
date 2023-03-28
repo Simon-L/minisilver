@@ -23,6 +23,9 @@ struct AcidFilter {
     chowdsp::FirstOrderHPF< float > hpf2; // fb filter
     chowdsp::FirstOrderHPF< float > hpf3; // output filter
 
+    juce::dsp::ProcessSpec spec;
+    chowdsp::NthOrderFilter<float, 8> OutputLPF;
+
 	float downsample4() {
 		hrfDn.process_block_D2(dL4, dR4, 4); // down 4 samples to 2, inplace
 		hrfDn.process_block_D2(dL4, dR4, 2); // down 2 samples to 1, inplace
@@ -36,6 +39,12 @@ struct AcidFilter {
 		hpf1.calcCoefs(50.0f, Fs); // input DC blocker
 		hpf2.calcCoefs(200.0f, Fs); // fb filter
 		hpf3.calcCoefs(80.0f, Fs); // output filter
+
+		spec.sampleRate = Fs;
+		spec.numChannels = 1;
+		OutputLPF.prepare(spec);
+		OutputLPF.setCutoffFrequency(60000.0f);
+		OutputLPF.setQValue(0.5f);
 	}
 
 	void setDCBlockerCutoff(float f) {
@@ -85,6 +94,11 @@ struct AcidFilter {
 			last_output = y4 * rgc;
 
 			dL4[i] = hpf3.processSample(last_output);
+    	}
+
+    	for (int i = 0; i < 4; ++i)
+    	{
+    		dL4[i] = OutputLPF.processSample(0, dL4[i]);
     	}
 
 		return downsample4();

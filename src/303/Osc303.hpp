@@ -14,11 +14,6 @@ struct Osc303 {
     float amplitude, targetAmplitude;
     float cv;
 
-    Osc303() {
-        spec.maximumBlockSize = 2048;
-        spec.numChannels = 1;
-    }
-
     // set CV value, accepted range is 0v-5.0v
     void setPitchCV(float value) {
         cv = value;
@@ -69,6 +64,8 @@ struct Osc303 {
     }
 
     void prepare(float sampleRate, float defaultCV = 1.0) {
+        spec.maximumBlockSize = 2048;
+        spec.numChannels = 1;
         spec.sampleRate = sampleRate * 4.0;
         saw.prepare(spec);
 
