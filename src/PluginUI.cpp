@@ -52,7 +52,6 @@ void PluginUI::generateLogo() {
     base_dimension = ImGui::GetWindowWidth() * logo_width;
     auto bitmap = lunasvg::Bitmap(base_dimension, base_dimension / 11.0);
     bitmap.clear(0x00000000);
-    d_stdout("logo_document %f %f", logo_document->width(), logo_document->height());
 
     logo_document->setMatrix(logo_document->matrix().scale(base_dimension/logo_document->width(), (base_dimension / 11.0)/logo_document->height()));
     logo_document->render(bitmap);
@@ -62,7 +61,6 @@ void PluginUI::generateLogo() {
     }
 
     bitmap.convertToRGBA();
-    d_stdout("bitmap %d %d", bitmap.width(), bitmap.height());
 
     glGenTextures(1, &logo_tex);
     glBindTexture(GL_TEXTURE_2D, logo_tex);
