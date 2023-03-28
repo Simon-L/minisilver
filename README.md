@@ -1,29 +1,15 @@
-# DPF + ImGui template plugin project
+# OpenSilver/MiniSilver flavours of TB-303 clone
 
-> :warning: You're on the directaccess branch!
->
-> This branch shows how to use direct access to the Plugin instance from the GUI, code refactored into separate .hpp/.cpp  
-> :rotating_light: **No realtime and access safety, bring your own!**
+> :warning: WIP! Put a limiter on the output! There are known bugs causing high volume!
 
 ![screenshot](./Screenshot.png)
-
-This repository contains an example audio plugin project using DPF and ImGui.
-
-`git clone --recursive https://github.com/Simon-L/imgui-template-plugin my-cool-plugin`
-
-## Placeholders
-
-* `__CMAKENAME__`: used in CMakeLists.txt
-* `__DPFLABEL__`: restricted, short, _, a-z, A-Z and 0-9
-* `__DPFURI__`: LV2 plugin uri `urn:like:this`
-* `__DPFDESCRIPTION__`: can contain spaces
-* `__YOURNAME__`: can contain spaces
-* `__IMGUINAME__`: label in the imgui header, can contain spaces
 
 ## Building
 
 ```bash
+git clone --recursive https://github.com/Simon-L/minisilver
 cmake -Bbuild
 cmake --build build
 # optionally cmake --build build --parallel 16
+./build/bin/minisilver
 ```
