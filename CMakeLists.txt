@@ -13,7 +13,7 @@ project(${NAME})
 add_subdirectory(dpf)
 
 dpf_add_plugin(${NAME}
-  TARGETS lv2 jack
+  TARGETS vst3 clap lv2 jack
   MONOLITHIC
   FILES_DSP
       src/PluginDSP.cpp
