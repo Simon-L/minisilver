@@ -36,15 +36,11 @@ PluginUI::~PluginUI() {
 
 void PluginUI::parameterChanged(uint32_t index, float value)
 {
-    switch (index) {
-    case kCutoff:
-        fGain = value;
-        repaint();
+    if (params.values[index] == value)
         return;
-    case kResonance:
-        fOutputParam = value;
-        return;
-    }
+
+    params.values[index] = value;
+    repaint();
 }
 
 void PluginUI::generateLogo() {
@@ -138,18 +134,18 @@ void PluginUI::onImGuiDisplay()
 
     ImGui::PushFont(font1);
     if (cutoff_knob == nullptr) {
-        cutoff_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_8.svg", ImGuiKnobVariant_Stepped, &v_cutoff, 0.0f, 1.0f, 100);
+        cutoff_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_8.svg", ImGuiKnobVariant_Stepped, &params.values[kCutoff], 0.0f, 1.0f, 100);
         cutoff_knob->setBg("res/303Knob_0_8_bg.svg");
-        resonance_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_resonance, 0.0f, 1.0f, 100);
+        resonance_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kResonance], 0.0f, 1.0f, 100);
         resonance_knob->setBg("res/303Knob_0_4_bg.svg");
-        envmod_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_envmod, 0.0f, 1.0f, 100);
+        envmod_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kEnvMod], 0.0f, 1.0f, 100);
         envmod_knob->setBg("res/303Knob_0_4_bg.svg");
-        decay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_decay, -2.223, 1.223, 100);
+        decay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kDecay], -2.223, 1.223, 100);
         decay_knob->setBg("res/303Knob_0_4_bg.svg");
-        accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &v_accent, 0.0f, 1.0f, 100);
+        accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kAccent], 0.0f, 1.0f, 100);
         accent_knob->setBg("res/303Knob_0_4_bg.svg");
-        tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &v_tuning, -1.0f, 1.0f);
-        vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &v_vcadecay, -1.0f, 1.0f);
+        tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &params.values[kTuning], -1.0f, 1.0f);
+        vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &params.values[kVcaDec], -2.5f, 4.0f);
         generateLogo();
     }
 
@@ -160,34 +156,32 @@ void PluginUI::onImGuiDisplay()
         showMenuBar();
         ImGui::PopStyleVar();
 
-        if (ImGuiKnobs::Knob("CUT OFF FREQ", &v_cutoff, 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
-            d_stdout("CUT OFF FREQ %f -> %f", v_cutoff, paramLog(v_cutoff, 0.5f, 0.1f, 0.85, 7.4));
-            setParameterValue(kCutoff, v_cutoff);
+        if (ImGuiKnobs::Knob("CUT OFF FREQ", &params.values[kCutoff], 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            setParameterValue(kCutoff, params.values[kCutoff]);
         }
         cutoff_knob->paint();
         ImGui::SameLine();
 
-        if (ImGuiKnobs::Knob("RESONANCE", &v_resonance, 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
-            setParameterValue(kResonance, v_resonance);
+        if (ImGuiKnobs::Knob("RESONANCE", &params.values[kResonance], 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            setParameterValue(kResonance, params.values[kResonance]);
         }
         resonance_knob->paint();
         ImGui::SameLine();
 
-        if (ImGuiKnobs::Knob("ENV MOD", &v_envmod, 0.0f, 1.0f, 0.003f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
-            d_stdout("ENV MOD %f -> %f", v_envmod, paramLog(v_envmod, 0.5f, 0.1f, 0.25, 0.887));
-            setParameterValue(kEnvMod, v_envmod);
+        if (ImGuiKnobs::Knob("ENV MOD", &params.values[kEnvMod], 0.0f, 1.0f, 0.003f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            setParameterValue(kEnvMod, params.values[kEnvMod]);
         }
         envmod_knob->paint();
         ImGui::SameLine();
 
-        if (ImGuiKnobs::Knob("DECAY", &v_decay, -2.223, 1.223, 0.01f, setTimeDisplayValueString(v_decay), ImGuiKnobVariant_Stepped, 100)) {
-            setParameterValue(kDecay, v_decay);
+        if (ImGuiKnobs::Knob("DECAY", &params.values[kDecay], -2.223, 1.223, 0.01f, setTimeDisplayValueString(vcfDecayDisplayString, params.values[kDecay]), ImGuiKnobVariant_Stepped, 100)) {
+            setParameterValue(kDecay, params.values[kDecay]);
         }
         decay_knob->paint();
         ImGui::SameLine();
 
-        if (ImGuiKnobs::Knob("ACCENT", &v_accent, 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
-            setParameterValue(kAccent, v_accent);
+        if (ImGuiKnobs::Knob("ACCENT", &params.values[kAccent], 0.0f, 1.0f, 0.005f, "%.3f", ImGuiKnobVariant_Stepped, 100)) {
+            setParameterValue(kAccent, params.values[kAccent]);
         }
         accent_knob->paint();
         auto next_line = ImGui::GetCursorPos();
@@ -207,15 +201,15 @@ void PluginUI::onImGuiDisplay()
         ImGui::Text("%s", "HOLD VCA");
         ImGui::SetCursorPos(hold_topl);
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, Accent);
-        ImGui::PushStyleColor(ImGuiCol_Button, v_holdvca > 0.5f ? Accent : ImGui::GetStyle().Colors[ImGuiCol_Button]);
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, v_holdvca > 0.5f ? Accent : ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
+        ImGui::PushStyleColor(ImGuiCol_Button, params.values[kHoldVca] > 0.5f ? Accent : ImGui::GetStyle().Colors[ImGuiCol_Button]);
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, params.values[kHoldVca] > 0.5f ? Accent : ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
         if (ImGui::Button("##hold", ImVec2(but_w, but_h))) {
-            v_holdvca = 0.0;
-            setParameterValue(kHoldVca, v_holdvca);
+            params.values[kHoldVca] = 0.0;
+            setParameterValue(kHoldVca, params.values[kHoldVca]);
         }
         if (ImGui::IsItemClicked()) {
-            v_holdvca = 1.0;
-            setParameterValue(kHoldVca, v_holdvca);
+            params.values[kHoldVca] = 1.0;
+            setParameterValue(kHoldVca, params.values[kHoldVca]);
         }
         ImGui::PopStyleColor();
         ImGui::PopStyleColor();
@@ -230,8 +224,8 @@ void PluginUI::onImGuiDisplay()
         float wfm_slider_y = ImGui::GetStyle().FrameBorderSize * 2 + ImGui::GetStyle().FramePadding.y * 2 + ImGui::GetTextLineHeight();
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (50 - wfm_slider_y) * 0.5);
         ImGui::SetNextItemWidth(but_w);
-        if (ImGui::SliderInt("##waveforum", &v_waveform, 0, 1, v_waveform ? "PULSE" : "SAW", ImGuiSliderFlags_NoInput)) {
-            setParameterValue(kWaveform, (float)v_waveform);
+        if (ImGui::SliderInt("##waveforum", &params.v_waveform, 0, 1, params.v_waveform ? "PULSE" : "SAW", ImGuiSliderFlags_NoInput)) {
+            setParameterValue(kWaveform, (float)params.v_waveform);
         }
         ImGui::EndGroup();
 
@@ -239,14 +233,14 @@ void PluginUI::onImGuiDisplay()
         tuning_topl.y += but_h + ImGui::GetStyle().ItemSpacing.y;
         tuning_topl.x += (but_w - 64) * 0.5;
         ImGui::SetCursorPos(tuning_topl);
-        if (ImGuiKnobs::Knob("TUNING", &v_tuning, -1.0f, 1.0f, 0.01f, "%.3f", ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
-            setParameterValue(kTuning, v_tuning);
+        if (ImGuiKnobs::Knob("TUNING", &params.values[kTuning], -1.0f, 1.0f, 0.01f, "%.3f", ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
+            setParameterValue(kTuning, params.values[kTuning]);
         }
         tuning_knob->paint();
         ImGui::SameLine();
         ImGui::SetCursorPosX(wfm_topl.x + (but_w - 64) * 0.5);
-        if (ImGuiKnobs::Knob("VCA DEC", &v_vcadecay, -1.0f, 1.0f, 0.01f, "%.3f", ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
-            setParameterValue(kVcaDec, v_vcadecay);
+        if (ImGuiKnobs::Knob("VCA DEC", &params.values[kVcaDec], -2.5f, 4.0f, 0.01f, setTimeDisplayValueString(vcaDecayDisplayString, params.values[kVcaDec]), ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput)) {
+            setParameterValue(kVcaDec, params.values[kVcaDec]);
         }
         vcadecay_knob->paint();
 
