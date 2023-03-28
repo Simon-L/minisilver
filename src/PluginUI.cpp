@@ -3,6 +3,7 @@
 #include "PluginUI_style.hpp"
 #include "PluginUI_colors.hpp"
 
+#include "DistrhoPluginUtils.hpp"
 
 START_NAMESPACE_DISTRHO
 
@@ -20,8 +21,12 @@ PluginUI::PluginUI()
     SetupImGuiStyle();
     setupSilverboxColors();
 
+    std::string font_path = std::string(getResourcePath(getBundlePath()));
+    font_path += "/Commissioner-Regular.ttf";
+    d_stdout("font_path %s", font_path.c_str());
+
     ImGuiIO& io = ImGui::GetIO();
-    font1 = io.Fonts->AddFontFromFileTTF("Commissioner-Regular.ttf", 16);
+    font1 = io.Fonts->AddFontFromFileTTF(font_path.c_str(), 16);
     d_stdout("FontSize: %f", font1->FontSize);
 
     for (int i = 0; i < kParamCount; ++i)
@@ -44,7 +49,9 @@ void PluginUI::parameterChanged(uint32_t index, float value)
 }
 
 void PluginUI::generateLogo() {
-    auto logo_document = lunasvg::Document::loadFromFile("res/logo.svg");
+    std::string logo_path = std::string(getResourcePath(getBundlePath()));
+    logo_path += "/logo.svg";
+    auto logo_document = lunasvg::Document::loadFromFile(logo_path.c_str());
     if(!logo_document) {
         d_stdout("Logo document error");
         return; 
@@ -132,18 +139,27 @@ void PluginUI::onImGuiDisplay()
 
     ImGui::PushFont(font1);
     if (cutoff_knob == nullptr) {
-        cutoff_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_8.svg", ImGuiKnobVariant_Stepped, &params.values[kCutoff], 0.0f, 1.0f, 100);
-        cutoff_knob->setBg("res/303Knob_0_8_bg.svg");
-        resonance_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kResonance], 0.0f, 1.0f, 100);
-        resonance_knob->setBg("res/303Knob_0_4_bg.svg");
-        envmod_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kEnvMod], 0.0f, 1.0f, 100);
-        envmod_knob->setBg("res/303Knob_0_4_bg.svg");
-        decay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kDecay], -2.223, 1.223, 100);
-        decay_knob->setBg("res/303Knob_0_4_bg.svg");
-        accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_4.svg", ImGuiKnobVariant_Stepped, &params.values[kAccent], 0.0f, 1.0f, 100);
-        accent_knob->setBg("res/303Knob_0_4_bg.svg");
-        tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &params.values[kTuning], -1.0f, 1.0f);
-        vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>("res/303Knob_0_24.svg", ImGuiKnobVariant_Stepped, &params.values[kVcaDec], -2.5f, 4.0f);
+        std::string resourcesPath = std::string(getResourcePath(getBundlePath()));
+        d_stdout("res path: %s", resourcesPath.c_str());
+        std::string pot_0_8 = resourcesPath + "/303Knob_0_8.svg";
+        std::string pot_0_8_bg = resourcesPath + "/303Knob_0_8_bg.svg";
+        cutoff_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_8.c_str(), ImGuiKnobVariant_Stepped, &params.values[kCutoff], 0.0f, 1.0f, 100);
+        cutoff_knob->setBg(pot_0_8_bg.c_str());
+
+        std::string pot_0_4 = resourcesPath + "/303Knob_0_4.svg";
+        std::string pot_0_4_bg = resourcesPath + "/303Knob_0_4_bg.svg";
+        resonance_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kResonance], 0.0f, 1.0f, 100);
+        resonance_knob->setBg(pot_0_4_bg.c_str());
+        envmod_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kEnvMod], 0.0f, 1.0f, 100);
+        envmod_knob->setBg(pot_0_4_bg.c_str());
+        decay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kDecay], -2.223, 1.223, 100);
+        decay_knob->setBg(pot_0_4_bg.c_str());
+        accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kAccent], 0.0f, 1.0f, 100);
+        accent_knob->setBg(pot_0_4_bg.c_str());
+
+        std::string pot_0_24 = resourcesPath + "/303Knob_0_24.svg";
+        tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kTuning], -1.0f, 1.0f);
+        vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVcaDec], -2.5f, 4.0f);
         generateLogo();
     }
 
