@@ -24,9 +24,26 @@ void PluginDSP::setParameterValue(uint32_t index, float value)
 {
     d_stdout("DSP %d %s -> %f", index, params.properties[index].name.buffer(), value);
     params.values[index] = value;
-    if (index == kCutoff)
+    switch (index) {
+    case kCutoff:
+        synth.setCutoff(paramLog(params.values[kCutoff], cutoffLogBpX, cutoffLogBpY, cutoffLogMin, cutoffLogMax));
         d_stdout("\tDSP CUT OFF FREQ -> %f", paramLog(params.values[kCutoff], cutoffLogBpX, cutoffLogBpY, cutoffLogMin, cutoffLogMax));
-    if (index == kEnvMod)
+        break;
+    case kResonance:
+        synth.setResonance(params.values[kResonance]);
+        break;
+    case kEnvMod:
+        synth.setEnvmod(paramLog(params.values[kEnvMod], envModLogBpX, envModLogBpY, envModLogMin, envModLogMax));
         d_stdout("\tDSP ENV MOD FREQ -> %f", paramLog(params.values[kEnvMod], envModLogBpX, envModLogBpY, envModLogMin, envModLogMax));
-
+        break;
+    case kAccent:
+        synth.setAccent(params.values[kAccent]);
+        break;
+    case kDecay:
+        synth.setDecay(params.values[kDecay]);
+        break;
+    case kWaveform:
+        value > 0.5 ? synth.useSquareWaveform() : synth.useSawWaveform();
+        break;
+    }
 }

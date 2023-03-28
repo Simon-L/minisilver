@@ -10,6 +10,8 @@
 
 #include "MiniSilver.hpp"
 
+#include "303/AcidSynth.hpp"
+
 #include <memory>
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -40,6 +42,8 @@ class PluginDSP : public Plugin
     // std::unique_ptr<CParamSmooth> fSmoothGain = std::make_unique<CParamSmooth>(20.0f, fSampleRate);
 
     MiniSilverParameters params;
+
+    AcidSynth synth;
 
 public:
 /**
@@ -81,6 +85,10 @@ When a parameter is marked as automatable, you must ensure no non-realtime opera
 
 // ----------------------------------------------------------------------------------------------------------------
 // Audio/MIDI Processing
+
+    bool accent = false;
+    int nextGateOff = -1;
+    void handleMidi(const MidiEvent* event);
 
 /**
 Activate this plugin.

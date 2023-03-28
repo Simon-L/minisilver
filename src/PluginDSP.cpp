@@ -20,10 +20,19 @@ PluginDSP::PluginDSP()
 void PluginDSP::activate()
 {
     // fSmoothGain->flush();
+    synth.prepare(getSampleRate());
+
+    synth.filter.OutputLPF.setCutoffFrequency(40000.0);
+    synth.filter.OutputLPF.setQValue(1.5);
 }
 
 void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, const MidiEvent* midiEvents, uint32_t midiEventCount)
 {
+
+    for (int m = 0; m < midiEventCount; ++m)
+    {   
+        handleMidi(&midiEvents[m]);
+    }
 
     // get the left and right audio outputs
     float* const outL = outputs[0];
@@ -31,9 +40,10 @@ void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, cons
 
     // apply gain against all samples
     for (uint32_t i=0; i < frames; ++i)
-    {
-        outL[i] = 0.0;
-        outR[i] = 0.0;
+    {   
+        float sy = synth.process();
+        outL[i] = sy * 0.5;
+        outR[i] = sy * 0.5;
     }
 }
 

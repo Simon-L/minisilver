@@ -1,8 +1,10 @@
-// #include "ADAREnvelope.h"
-// #include "WowFilter.h"
-// #include "Osc303.hpp"
-// #include "AcidFilter.hpp"
-// #include "SlideFilter.hpp"
+#include "chowdsp_dsp_utils/chowdsp_dsp_utils.h"
+
+#include "ADAREnvelope.h"
+#include "WowFilter.h"
+#include "Osc303.hpp"
+#include "AcidFilter.hpp"
+#include "SlideFilter.hpp"
 #include "AcidFormulas.hpp"
 
 struct AcidSynth
@@ -46,13 +48,14 @@ struct AcidSynth
 
     float note_cv;
     uint8_t wfm = 1; // 1 == saw, 0 == square
-    void useSawWaveform() { wfm = 1; }
-    void useSquareWaveform() { wfm = 0; }
+    void useSawWaveform() { wfm = 1; d_stdout("Using wfm SAW"); }
+    void useSquareWaveform() { wfm = 0; d_stdout("Using wfm PULSE"); }
 
     inline void setCutoff(float value) { Vcutoff = value; }
     inline void setResonance(float value) { Resonance = value; }
     inline void setEnvmod(float value) { Envmod = value; }
     inline void setAccent(float value) { Accent = value; }
+    inline void setDecay(float value) { decTime = value; }
 
     bool gate = false;
     bool accent = false;
@@ -94,7 +97,7 @@ struct AcidSynth
         vcf_env.process(atkTime, accent ? -2.223 : decTime, 3, 1, false); // atk, dec, atk shape, dec shape, gate
 
         float Vacc = wowFilter.processSample(accent ? vcf_env.output * 9.91 * Accent : 0.0f);
-        float freq = vcf_env_freq2(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
+        float freq = vcf_env_freq(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
 
         if (freq >= (sampleRate * 4.0 * 0.495)) {
             d_stdout("!!!!! limit freq %f", freq);
