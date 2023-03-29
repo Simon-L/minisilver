@@ -13,3 +13,5 @@ cmake --build build
 # optionally cmake --build build --parallel 16
 ./build/bin/minisilver
 ```
+
+License is GPL 3 or later
