@@ -21,13 +21,20 @@ PluginUI::PluginUI()
     SetupImGuiStyle();
     setupSilverboxColors();
 
-    std::string font_path = std::string(getResourcePath(getBundlePath()));
-    font_path += "/Commissioner-Regular.ttf";
-    d_stdout("font_path %s", font_path.c_str());
+    std::string font_path;
+    // FIXME: Don't do this!!! Clap format reports an illegal path for resources
+    if (getBundlePath() == nullptr || !std::strcmp(getPluginFormatName(), "CLAP")) {
+        resources_path = std::string(getBinaryFilename());
+        resources_path = resources_path.substr(0, resources_path.find_last_of("\\/"));
+        resources_path += "/minisilver_resources";
+    } else {
+        resources_path = std::string(getResourcePath(getBundlePath()));
+    }
 
+    font_path = resources_path + "/Commissioner-Regular.ttf";
     ImGuiIO& io = ImGui::GetIO();
     font1 = io.Fonts->AddFontFromFileTTF(font_path.c_str(), 16);
-    d_stdout("FontSize: %f", font1->FontSize);
+    // d_stdout("FontSize: %f", font1->FontSize);
 
     for (int i = 0; i < kParamCount; ++i)
     {
@@ -49,7 +56,7 @@ void PluginUI::parameterChanged(uint32_t index, float value)
 }
 
 void PluginUI::generateLogo() {
-    std::string logo_path = std::string(getResourcePath(getBundlePath()));
+    std::string logo_path = resources_path;
     logo_path += "/logo.svg";
     auto logo_document = lunasvg::Document::loadFromFile(logo_path.c_str());
     if(!logo_document) {
@@ -139,15 +146,14 @@ void PluginUI::onImGuiDisplay()
 
     ImGui::PushFont(font1);
     if (cutoff_knob == nullptr) {
-        std::string resourcesPath = std::string(getResourcePath(getBundlePath()));
-        d_stdout("res path: %s", resourcesPath.c_str());
-        std::string pot_0_8 = resourcesPath + "/303Knob_0_8.svg";
-        std::string pot_0_8_bg = resourcesPath + "/303Knob_0_8_bg.svg";
+        std::string svg_path = resources_path;
+        std::string pot_0_8 = svg_path + "/303Knob_0_8.svg";
+        std::string pot_0_8_bg = svg_path + "/303Knob_0_8_bg.svg";
         cutoff_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_8.c_str(), ImGuiKnobVariant_Stepped, &params.values[kCutoff], 0.0f, 1.0f, 100);
         cutoff_knob->setBg(pot_0_8_bg.c_str());
 
-        std::string pot_0_4 = resourcesPath + "/303Knob_0_4.svg";
-        std::string pot_0_4_bg = resourcesPath + "/303Knob_0_4_bg.svg";
+        std::string pot_0_4 = svg_path + "/303Knob_0_4.svg";
+        std::string pot_0_4_bg = svg_path + "/303Knob_0_4_bg.svg";
         resonance_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kResonance], 0.0f, 1.0f, 100);
         resonance_knob->setBg(pot_0_4_bg.c_str());
         envmod_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kEnvMod], 0.0f, 1.0f, 100);
@@ -157,7 +163,7 @@ void PluginUI::onImGuiDisplay()
         accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kAccent], 0.0f, 1.0f, 100);
         accent_knob->setBg(pot_0_4_bg.c_str());
 
-        std::string pot_0_24 = resourcesPath + "/303Knob_0_24.svg";
+        std::string pot_0_24 = svg_path + "/303Knob_0_24.svg";
         tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kTuning], -1.0f, 1.0f);
         vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVcaDec], -2.5f, 4.0f);
         generateLogo();

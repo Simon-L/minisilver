@@ -25,6 +25,8 @@ class PluginUI : public UI
 
     bool showDemo = false;
 
+    std::string resources_path;
+
     ImFont* font1;
 
     std::unique_ptr<ImGuiKnobsSVG::Knob> cutoff_knob;
