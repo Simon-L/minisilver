@@ -93,13 +93,17 @@ void PluginUI::showMenuBar()
         auto topl = ImVec2(ImGui::GetStyle().FramePadding.x, std::round(toply));
         auto botr = ImVec2(topl.x + base_dimension, topl.y + base_dimension / 11.0);
         ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)logo_tex, topl, botr);
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + topl.x + base_dimension + ImGui::GetStyle().ItemSpacing.x);
+        ImGui::Text("Thx for trying! Unimplemented: Tweaks, Hold VCA, Tuning, VCA dec");
         float button_x = getWidth();
         button_x -= ImGui::GetStyle().FramePadding.x * 5;
         button_x -= ImGui::CalcTextSize("About").x;
         button_x -= ImGui::GetStyle().ItemSpacing.x;
         button_x -= ImGui::CalcTextSize("Tweaks").x;
         ImGui::SetCursorPosX(button_x);
+        ImGui::BeginDisabled();
         ImGui::SmallButton("Tweaks");
+        ImGui::EndDisabled();
         ImGui::PushStyleColor(ImGuiCol_Button, ImGui::IsPopupOpen("aboutpopup") ? Accent : ImGui::GetStyle().Colors[ImGuiCol_Button]);
         if (ImGui::SmallButton("About")) {
             ImGui::OpenPopup("aboutpopup");
