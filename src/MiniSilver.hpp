@@ -33,20 +33,11 @@ static constexpr float envModLogBpY{0.1};
 static constexpr float envModLogMin{0.25};
 static constexpr float envModLogMax{0.887};
 
+inline void configParameter(Parameter* p, uint32_t h,const char * n,const char * s,const char * u,float def,float min,float max) { p->hints = h;  p->name = n;  p->symbol= s;  p->unit = u;  p->ranges.def = def;  p->ranges.min = min;  p->ranges.max = max;}
+
 struct MiniSilverParameters
 {
-    // Parameter(uint32_t h,const char * n,const char * s,const char * u,float def,float min,float max),
-    Parameter properties[kParamCount] = {
-        Parameter(kParameterIsAutomatable, "Cutoff frequency", "cutoff_freq", "", 0.5f, 0.0, 1.0), // Cutoff
-        Parameter(kParameterIsAutomatable, "Resonance", "resonance", "", 0.5f, 0.0, 1.0), // Resonance
-        Parameter(kParameterIsAutomatable, "Env Mod", "env_mod", "", 0.5f, 0.0, 1.0), // EnvMod
-        Parameter(kParameterIsAutomatable, "Decay", "decay", "", -2.223f, -2.223, 1.223), // Decay
-        Parameter(kParameterIsAutomatable, "Accent", "accent", "", 0.5f, 0.0, 1.0), // Accent
-        Parameter(kParameterIsAutomatable|kParameterIsBoolean, "Hold VCA", "hold_vca", "", 0.0f, 0.0, 1.0), // HoldVca
-        Parameter(kParameterIsAutomatable|kParameterIsBoolean, "Waveform", "waveform", "", 0.0f, 0.0, 1.0), // Waveform
-        Parameter(kParameterIsAutomatable, "Tuning", "tuning", "", 0.5f, 0.0, 1.0), // Tuning
-        Parameter(kParameterIsAutomatable, "VCA Dec", "vca_dec", "", 2.0f, -2.5, 4.0) // VcaDec
-    };
+    Parameter properties[kParamCount];
 
     float values[kParamCount];
     int v_waveform;
@@ -56,6 +47,16 @@ struct MiniSilverParameters
         {
             values[i] = properties[i].ranges.def;
         }
+
+        configParameter(&properties[kCutoff], kParameterIsAutomatable, "Cutoff frequency", "cutoff_freq", "", 0.5f, 0.0, 1.0); // Cutoff
+        configParameter(&properties[kResonance], kParameterIsAutomatable, "Resonance", "resonance", "", 0.5f, 0.0, 1.0); // Resonance
+        configParameter(&properties[kEnvMod], kParameterIsAutomatable, "Env Mod", "env_mod", "", 0.5f, 0.0, 1.0); // EnvMod
+        configParameter(&properties[kDecay], kParameterIsAutomatable, "Decay", "decay", "", -2.223f, -2.223, 1.223); // Decay
+        configParameter(&properties[kAccent], kParameterIsAutomatable, "Accent", "accent", "", 0.5f, 0.0, 1.0); // Accent
+        configParameter(&properties[kHoldVca], kParameterIsAutomatable|kParameterIsBoolean, "Hold VCA", "hold_vca", "", 0.0f, 0.0, 1.0); // HoldVca
+        configParameter(&properties[kWaveform], kParameterIsAutomatable|kParameterIsBoolean, "Waveform", "waveform", "", 0.0f, 0.0, 1.0); // Waveform
+        configParameter(&properties[kTuning], kParameterIsAutomatable, "Tuning", "tuning", "", 0.5f, 0.0, 1.0); // Tuning
+        configParameter(&properties[kVcaDec], kParameterIsAutomatable, "VCA Dec", "vca_dec", "", 2.0f, -2.5, 4.0); // VcaDec
     }
 
     float* get(uint index) {
