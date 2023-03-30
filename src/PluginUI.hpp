@@ -79,6 +79,15 @@ class PluginUI : public UI
         return str;
     }
 
+    void pushCustomKnobsColors() {
+        auto *colors = ImGui::GetStyle().Colors;
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, colors[ImGuiCol_ScrollbarGrabActive]);
+    }
+    
+    void popCustomKnobsColors() {
+        ImGui::PopStyleColor();
+    }
+
     // ----------------------------------------------------------------------------------------------------------------
     // Widget Callbacks
 
