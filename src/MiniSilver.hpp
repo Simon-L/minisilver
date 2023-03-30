@@ -8,6 +8,7 @@ enum Parameters {
     kWaveform,
     kTuning,
     kVcaDec,
+    kVolume,
     kParamCount
 };
 
@@ -44,8 +45,9 @@ struct MiniSilverParameters
         Parameter(kParameterIsAutomatable, "Accent", "accent", "", 0.5f, 0.0, 1.0), // Accent
         Parameter(kParameterIsAutomatable|kParameterIsBoolean, "Hold VCA", "hold_vca", "", 0.0f, 0.0, 1.0), // HoldVca
         Parameter(kParameterIsAutomatable|kParameterIsBoolean, "Waveform", "waveform", "", 0.0f, 0.0, 1.0), // Waveform
-        Parameter(kParameterIsAutomatable, "Tuning", "tuning", "", 0.5f, 0.0, 1.0), // Tuning
-        Parameter(kParameterIsAutomatable, "VCA Dec", "vca_dec", "", 2.0f, -2.5, 4.0) // VcaDec
+        Parameter(kParameterIsAutomatable, "Tuning", "tuning", "", 0.0f, -1.0, 1.0), // Tuning
+        Parameter(kParameterIsAutomatable, "VCA Dec", "vca_dec", "", 2.0f, -2.5, 4.0), // VcaDec
+        Parameter(kParameterIsAutomatable, "Volume", "volume", "", 0.6303f, 0.0, 1.0), // Volume
     };
 
     float values[kParamCount];

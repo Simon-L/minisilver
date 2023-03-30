@@ -42,8 +42,8 @@ void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, cons
     for (uint32_t i=0; i < frames; ++i)
     {   
         float sy = synth.process();
-        outL[i] = sy * 0.5;
-        outR[i] = sy * 0.5;
+        outL[i] = sy * params.values[kVolume];
+        outR[i] = sy * params.values[kVolume];
     }
 }
 

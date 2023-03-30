@@ -121,7 +121,7 @@ struct AcidSynth
 
         vca_env.process(-10.2877, gate ? std::log2(4.0f) : -7.38f, 1, 1, false); // atk, dec, atk shape, dec shape, gate
 
-        float amp = vca_env.output + (accent ? vcf_env.output * 0.66 * Accent : 0.0f);
+        float amp = vca_env.output + (accent ? vcf_env.output * 0.35 * Accent : 0.0f);
         return filt * amp;
     }
 };

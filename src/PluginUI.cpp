@@ -40,6 +40,7 @@ PluginUI::PluginUI()
     {
         d_stdout("UI %d -> %s (%s)", i, params.properties[i].name.buffer(), params.properties[i].symbol.buffer());
     }
+
 }
 
 PluginUI::~PluginUI() {
@@ -167,6 +168,9 @@ void PluginUI::onImGuiDisplay()
         accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kAccent], 0.0f, 1.0f, 100);
         accent_knob->setBg(pot_0_4_bg.c_str());
 
+        volume_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVolume], 0.0f, 1.0f, 100);
+        volume_knob->setBg(pot_0_4_bg.c_str());
+
         std::string pot_0_24 = svg_path + "/303Knob_0_24.svg";
         tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kTuning], -1.0f, 1.0f);
         vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVcaDec], -2.5f, 4.0f);
@@ -276,6 +280,10 @@ void PluginUI::onImGuiDisplay()
         ImGui::Spacing();
         ImGui::Spacing();
 
+        if (ImGuiKnobs::Knob("VOLUME", &params.values[kVolume], 0.0f, 1.0f, 0.005f, "%.4f", ImGuiKnobVariant_Stepped, 100)) {
+            setParameterValue(kVolume, params.values[kVolume]);
+        }
+        volume_knob->paint();
         // ImGui::Checkbox("Show demo window", &showDemo);
         // if (showDemo) ImGui::ShowDemoWindow(&showDemo);
     }

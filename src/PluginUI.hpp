@@ -36,6 +36,7 @@ class PluginUI : public UI
     std::unique_ptr<ImGuiKnobsSVG::Knob> accent_knob;
     std::unique_ptr<ImGuiKnobsSVG::Knob> tuning_knob;
     std::unique_ptr<ImGuiKnobsSVG::Knob> vcadecay_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> volume_knob;
 
     GLuint logo_tex;
     float logo_width = 0.47;
