@@ -29,8 +29,8 @@
      showgrid="false"
      units="px"
      inkscape:zoom="9.6799899"
-     inkscape:cx="32.799621"
-     inkscape:cy="34.969045"
+     inkscape:cx="40.960787"
+     inkscape:cy="40.237645"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="1680"
@@ -134,7 +134,13 @@
      style="display:inline"
      transform="translate(-21.919695,-21.919695)">
     <circle
-       style="opacity:1;fill:#c1bebd;fill-opacity:1;stroke:#dedddd;stroke-width:0.187217;stroke-opacity:1"
+       style="opacity:1;fill:#dedddd;fill-opacity:1;stroke:none;stroke-width:0.65328;stroke-dasharray:none;stroke-opacity:1"
+       id="circle1"
+       cx="31.882292"
+       cy="31.882292"
+       r="10.229735" />
+    <circle
+       style="opacity:1;fill:#c1bebd;fill-opacity:1;stroke:#a09897;stroke-width:0.58420002;stroke-opacity:1;stroke-dasharray:none"
        id="path1110"
        cx="31.882292"
        cy="31.882292"
