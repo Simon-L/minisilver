@@ -6,6 +6,7 @@
 #include "imgui-knobs.h"
 #include <imgui_internal.h>
 #include "imgui-knobs-svg.h"
+#include "implot.h"
 
 START_NAMESPACE_DISTRHO
 
@@ -39,6 +40,10 @@ class PluginUI : public UI
     char vcaDecayDisplayString[16];
 
     MiniSilverParameters params;
+
+    float local_plot[192000];
+    bool showTweaks{false};
+
     // ----------------------------------------------------------------------------------------------------------------
 
     public:
@@ -86,6 +91,7 @@ class PluginUI : public UI
 
     void generateLogo();
     void showMenuBar();
+    void showTweaksWindow();
 
     /**
       ImGui specific onDisplay function.

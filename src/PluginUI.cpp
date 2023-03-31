@@ -11,6 +11,7 @@ PluginUI::PluginUI()
     : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT),
       fResizeHandle(this)
 {
+    ImPlot::CreateContext();
     setGeometryConstraints(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true);
 
     // hide handle if UI is resizable
@@ -54,6 +55,22 @@ void PluginUI::parameterChanged(uint32_t index, float value)
 
     params.values[index] = value;
     repaint();
+}
+
+void PluginUI::showTweaksWindow() {
+    if (ImGui::CollapsingHeader("Tweaks", nullptr, ImGuiTreeNodeFlags_Leaf)) {
+        PluginDSP* const dspPtr = (PluginDSP*)getPluginInstancePointer();
+        if (dspPtr != NULL) {
+            if (dspPtr->plotRepaint) {
+                std::memcpy(local_plot, dspPtr->plot, dspPtr->plotSize * sizeof(float));
+                dspPtr->plotRepaint = false;
+            }
+            if (ImPlot::BeginPlot("My Plot")) {
+                ImPlot::PlotLine("My Line Plot", local_plot, dspPtr->plotSize);
+                ImPlot::EndPlot();
+            }
+        }
+    }
 }
 
 void PluginUI::generateLogo() {
@@ -102,9 +119,10 @@ void PluginUI::showMenuBar()
         button_x -= ImGui::GetStyle().ItemSpacing.x;
         button_x -= ImGui::CalcTextSize("Tweaks").x;
         ImGui::SetCursorPosX(button_x);
-        ImGui::BeginDisabled();
-        ImGui::SmallButton("Tweaks");
-        ImGui::EndDisabled();
+        if (ImGui::SmallButton("Tweaks")) {
+            showTweaks ^= true;
+            if (showTweaks) setHeight(DISTRHO_UI_DEFAULT_HEIGHT * 2);
+        }
         ImGui::PushStyleColor(ImGuiCol_Button, ImGui::IsPopupOpen("aboutpopup") ? Accent : ImGui::GetStyle().Colors[ImGuiCol_Button]);
         if (ImGui::SmallButton("About")) {
             ImGui::OpenPopup("aboutpopup");
@@ -293,6 +311,10 @@ void PluginUI::onImGuiDisplay()
         popCustomKnobsColors();
         // ImGui::Checkbox("Show demo window", &showDemo);
         // if (showDemo) ImGui::ShowDemoWindow(&showDemo);
+
+        if (showTweaks) {
+            showTweaksWindow();
+        }
     }
     ImGui::PopFont();
     ImGui::End();

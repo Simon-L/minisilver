@@ -23,7 +23,7 @@ void PluginDSP::activate()
     synth.prepare(getSampleRate());
 
     synth.filter.OutputLPF.setCutoffFrequency(40000.0);
-    synth.filter.OutputLPF.setQValue(1.5);
+    synth.filter.OutputLPF.setQValue(1.0);
 
     for (int par = 0; par < kParamCount; ++par)
     {   
@@ -49,6 +49,13 @@ void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, cons
         float sy = synth.process();
         outL[i] = sy * params.values[kVolume];
         outR[i] = sy * params.values[kVolume];
+
+        plot[plotIndex] = synth.freq;
+        plotIndex++;
+        if (plotIndex >= plotSize) {
+            plotIndex = 0;
+            plotRepaint = true;
+        }
     }
 }
 
