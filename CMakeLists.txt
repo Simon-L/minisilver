@@ -57,6 +57,20 @@ target_link_libraries(${NAME} PRIVATE chowdsp_lib)
 add_subdirectory(sst-filters)
 target_link_libraries(${NAME} PUBLIC sst-filters)
 
+if (CMAKE_OSX_ARCHITECTURES STREQUAL "arm64;x86_64")
+  # simde needed by sst-filters
+  message(STATUS "Importing SIMDE with FetchContent")
+  include(FetchContent)
+  FetchContent_Declare(
+    simde
+    GIT_REPOSITORY https://github.com/simd-everywhere/simde.git
+  )
+  FetchContent_MakeAvailable(simde)
+  add_library(simde INTERFACE)
+  target_include_directories(simde INTERFACE ${simde_SOURCE_DIR})
+  target_include_directories(${NAME} PUBLIC ${simde_SOURCE_DIR})
+endif ()
+
 add_subdirectory(lunasvg)
 target_link_libraries(${NAME} PUBLIC lunasvg)
 
