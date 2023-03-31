@@ -13,7 +13,7 @@ project(${NAME})
 add_subdirectory(dpf)
 
 dpf_add_plugin(${NAME}
-  TARGETS vst3 clap lv2 jack
+  TARGETS clap lv2 vst2 vst3 jack
   MONOLITHIC
   FILES_DSP
       src/PluginDSP.cpp
@@ -75,9 +75,11 @@ add_subdirectory(lunasvg)
 target_link_libraries(${NAME} PUBLIC lunasvg)
 
 add_custom_command(TARGET ${NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E echo "Bundling resources... Doing"
                    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.lv2/resources
                    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.vst3/Contents/Resources
                    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${NAME}>/bin/minisilver_resources
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.lv2/resources
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.vst3/Contents/Resources
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/minisilver_resources)
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/minisilver_resources
+                   COMMAND ${CMAKE_COMMAND} -E echo "Bundling resources... Done!")
