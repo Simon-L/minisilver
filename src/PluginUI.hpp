@@ -1,10 +1,3 @@
-/*
- * ImGui plugin example
- * Copyright (C) 2021 Jean Pierre Cimalando <jp-dev@inbox.ru>
- * Copyright (C) 2021-2022 Filipe Coelho <falktx@falktx.com>
- * SPDX-License-Identifier: ISC
- */
-
 #include "DistrhoUI.hpp"
 #include "ResizeHandle.hpp"
 
@@ -25,6 +18,8 @@ class PluginUI : public UI
 
     bool showDemo = false;
 
+    std::string resources_path;
+
     ImFont* font1;
 
     std::unique_ptr<ImGuiKnobsSVG::Knob> cutoff_knob;
@@ -34,6 +29,7 @@ class PluginUI : public UI
     std::unique_ptr<ImGuiKnobsSVG::Knob> accent_knob;
     std::unique_ptr<ImGuiKnobsSVG::Knob> tuning_knob;
     std::unique_ptr<ImGuiKnobsSVG::Knob> vcadecay_knob;
+    std::unique_ptr<ImGuiKnobsSVG::Knob> volume_knob;
 
     GLuint logo_tex;
     float logo_width = 0.47;
@@ -74,6 +70,15 @@ class PluginUI : public UI
         else
             std::sprintf(str, "%6.3fs", time);
         return str;
+    }
+
+    void pushCustomKnobsColors() {
+        auto *colors = ImGui::GetStyle().Colors;
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, colors[ImGuiCol_ScrollbarGrabActive]);
+    }
+    
+    void popCustomKnobsColors() {
+        ImGui::PopStyleColor();
     }
 
     // ----------------------------------------------------------------------------------------------------------------

@@ -96,7 +96,7 @@ struct AcidSynth
     float process() {
         vcf_env.process(atkTime, accent ? -2.223 : decTime, 3, 1, false); // atk, dec, atk shape, dec shape, gate
 
-        float Vacc = wowFilter.processSample(accent ? vcf_env.output * 9.91 * Accent : 0.0f);
+        float Vacc = wowFilter.processSample(accent ? vcf_env.output * 9.91 * (Accent * 0.15) : 0.0f);
         float freq = vcf_env_freq(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
 
         if (freq >= (sampleRate * 4.0 * 0.495)) {
@@ -121,7 +121,7 @@ struct AcidSynth
 
         vca_env.process(-10.2877, gate ? std::log2(4.0f) : -7.38f, 1, 1, false); // atk, dec, atk shape, dec shape, gate
 
-        float amp = vca_env.output + (accent ? vcf_env.output * 0.66 * Accent : 0.0f);
+        float amp = vca_env.output + (accent ? vcf_env.output * 1.2 * Accent : 0.0f);
         return filt * amp;
     }
 };

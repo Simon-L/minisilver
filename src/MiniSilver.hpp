@@ -8,6 +8,7 @@ enum Parameters {
     kWaveform,
     kTuning,
     kVcaDec,
+    kVolume,
     kParamCount
 };
 
@@ -38,7 +39,7 @@ inline void configParameter(Parameter* p, uint32_t h,const char * n,const char *
 struct MiniSilverParameters
 {
     Parameter properties[kParamCount];
-
+    
     float values[kParamCount];
     int v_waveform;
 
@@ -57,6 +58,7 @@ struct MiniSilverParameters
         configParameter(&properties[kWaveform], kParameterIsAutomatable|kParameterIsBoolean, "Waveform", "waveform", "", 0.0f, 0.0, 1.0); // Waveform
         configParameter(&properties[kTuning], kParameterIsAutomatable, "Tuning", "tuning", "", 0.5f, 0.0, 1.0); // Tuning
         configParameter(&properties[kVcaDec], kParameterIsAutomatable, "VCA Dec", "vca_dec", "", 2.0f, -2.5, 4.0); // VcaDec
+        configParameter(&properties[kVolume], kParameterIsAutomatable, "Volume", "volume", "", 0.6303f, 0.0, 1.0); // Volume
     }
 
     float* get(uint index) {
