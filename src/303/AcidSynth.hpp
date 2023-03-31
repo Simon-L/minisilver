@@ -17,6 +17,8 @@ struct AcidSynth
     WowFilter wowFilter;
     SlideFilter slideFilter;
 
+    float freq = 0.0;
+
     float atkTime = -9.482;
     float decTime = 1.223;
 
@@ -46,7 +48,7 @@ struct AcidSynth
 
     float sampleRate;
 
-    float note_cv;
+    float note_cv = 0.0f;
     uint8_t wfm = 1; // 1 == saw, 0 == square
     void useSawWaveform() { wfm = 1; d_stdout("Using wfm SAW"); }
     void useSquareWaveform() { wfm = 0; d_stdout("Using wfm PULSE"); }
@@ -97,7 +99,7 @@ struct AcidSynth
         vcf_env.process(atkTime, accent ? -2.223 : decTime, 3, 1, false); // atk, dec, atk shape, dec shape, gate
 
         float Vacc = wowFilter.processSample(accent ? vcf_env.output * 9.91 * (Accent * 0.15) : 0.0f);
-        float freq = vcf_env_freq(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
+        freq = vcf_env_freq(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
 
         if (freq >= (sampleRate * 4.0 * 0.495)) {
             d_stdout("!!!!! limit freq %f", freq);

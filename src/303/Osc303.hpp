@@ -12,7 +12,7 @@ struct Osc303 {
 
     float breakpoint, breakpoint2;
     float amplitude, targetAmplitude;
-    float cv;
+    float cv = 0.0f;
 
     // set CV value, accepted range is 0v-5.0v
     void setPitchCV(float value) {
