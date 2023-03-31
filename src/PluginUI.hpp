@@ -1,7 +1,7 @@
+#include "PluginDSP.hpp"
+
 #include "DistrhoUI.hpp"
 #include "ResizeHandle.hpp"
-
-#include "PluginDSP.hpp"
 
 #include "imgui-knobs.h"
 #include <imgui_internal.h>
