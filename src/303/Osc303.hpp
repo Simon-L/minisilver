@@ -10,8 +10,8 @@ struct Osc303 {
 
     chowdsp::FirstOrderLPF< float > lp1;
 
-    float breakpoint, breakpoint2;
-    float amplitude, targetAmplitude;
+    float breakpoint{0.0}, breakpoint2{0.0};
+    float amplitude{0.0}, targetAmplitude{0.0};
     float cv = 0.0f;
 
     // set CV value, accepted range is 0v-5.0v

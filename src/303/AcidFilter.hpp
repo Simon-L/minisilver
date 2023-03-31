@@ -4,14 +4,14 @@
 
 struct AcidFilter {
 
-	float y1, y2, y3, y4; // stages
-	float a; // tuning
-	float k; // the K
-	float rgc; // resonance gain compensation
-	float Fs;
-	float last_output;
+	float y1{0.0}, y2{0.0}, y3{0.0}, y4{0.0}; // stages
+	float a{0.0}; // tuning
+	float k{0.0}; // the K
+	float rgc{0.0}; // resonance gain compensation
+	float Fs{0.0};
+	float last_output{0.0};
 
-	float Fc, Res;
+	float Fc{0.0}, Res{0.0};
 
 	float dL4 alignas(16)[4], dR4 alignas(16)[4]; // L+R arrays of 4 floats for downsampler
 
