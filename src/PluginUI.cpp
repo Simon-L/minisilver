@@ -112,7 +112,7 @@ void PluginUI::showMenuBar()
         auto botr = ImVec2(topl.x + base_dimension, topl.y + base_dimension / 11.0);
         ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)logo_tex, topl, botr);
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + topl.x + base_dimension + ImGui::GetStyle().ItemSpacing.x);
-        ImGui::Text("Thx for trying! Unimplemented: Tweaks, Hold VCA, Tuning, VCA dec");
+        ImGui::Text("Thx for trying! Unimplemented: Tweaks, Hold VCA, Tuning");
         float button_x = getWidth();
         button_x -= ImGui::GetStyle().FramePadding.x * 5;
         button_x -= ImGui::CalcTextSize("About").x;
@@ -193,7 +193,7 @@ void PluginUI::onImGuiDisplay()
         std::string pot_0_24_bg = svg_path + "/303Knob_0_24_bg.svg";
         tuning_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kTuning], -1.0f, 1.0f);
         tuning_knob->setBg(pot_0_24_bg.c_str());
-        vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVcaDec], -2.5f, 4.0f);
+        vcadecay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_24.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVcaDec], -3.5f, 6.0f);
         vcadecay_knob->setBg(pot_0_24_bg.c_str());
         generateLogo();
     }
@@ -291,7 +291,7 @@ void PluginUI::onImGuiDisplay()
         tuning_knob->paint();
         ImGui::SameLine();
         ImGui::SetCursorPosX(wfm_topl.x + (but_w - 64) * 0.5);
-        if (ImGuiKnobs::Knob("VCA DEC", &params.values[kVcaDec], -2.5f, 4.0f, 0.01f, setTimeDisplayValueString(vcaDecayDisplayString, params.values[kVcaDec]), ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput, 11)) {
+        if (ImGuiKnobs::Knob("VCA DEC", &params.values[kVcaDec], -3.5f, 6.0f, 0.01f, setTimeDisplayValueString(vcaDecayDisplayString, params.values[kVcaDec]), ImGuiKnobVariant_Stepped, 0, ImGuiKnobFlags_ValueTooltip|ImGuiKnobFlags_NoInput, 11)) {
             setParameterValue(kVcaDec, params.values[kVcaDec]);
         }
         vcadecay_knob->paint();

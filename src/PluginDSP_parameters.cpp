@@ -45,5 +45,8 @@ void PluginDSP::setParameterValue(uint32_t index, float value)
     case kWaveform:
         value > 0.5 ? synth.useSquareWaveform() : synth.useSawWaveform();
         break;
+    case kVcaDec:
+        synth.setVcaDecay(params.values[kVcaDec]);
+        break;
     }
 }

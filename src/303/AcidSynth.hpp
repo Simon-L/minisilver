@@ -17,7 +17,8 @@ struct AcidSynth
     WowFilter wowFilter;
     SlideFilter slideFilter;
 
-    float decTime = 1.223;
+    float vcfDecTime = 1.223;
+    float vcaDecTime = 2.0;
 
     float freq = 0.0;
 
@@ -56,7 +57,8 @@ struct AcidSynth
     inline void setResonance(float value) { Resonance = value; }
     inline void setEnvmod(float value) { Envmod = value; }
     inline void setAccent(float value) { Accent = value; }
-    inline void setDecay(float value) { decTime = value; }
+    inline void setDecay(float value) { vcfDecTime = value; }
+    inline void setVcaDecay(float value) { vcaDecTime = value; }
 
     bool gate = false;
     bool accent = false;
@@ -95,7 +97,7 @@ struct AcidSynth
     }
     
     float process() {
-        vcf_env.process(-9.482, accent ? -2.223 : decTime, 3, 1, false); // atk, dec, atk shape, dec shape, gate
+        vcf_env.process(-9.482, accent ? -2.223 : vcfDecTime, 3, 1, false); // atk, dec, atk shape, dec shape, gate
 
         float Vacc = wowFilter.processSample(accent ? vcf_env.output * 9.91 * (Accent * 0.15) : 0.0f);
         float freq = vcf_env_freq(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
@@ -120,7 +122,7 @@ struct AcidSynth
         else if (wfm == 1) filt = filter.processSample(sawBuffer);
         else filt = 0.0f;
 
-        vca_env.process(-10.2877, gate ? std::log2(4.0f) : -7.38f, 1, 1, false); // atk, dec, atk shape, dec shape, gate
+        vca_env.process(-10.2877, gate ? vcaDecTime : -7.38f, 1, 1, false); // atk, dec, atk shape, dec shape, gate
 
         float amp = vca_env.output + (accent ? vcf_env.output * 1.2 * Accent : 0.0f);
         return filt * amp;
