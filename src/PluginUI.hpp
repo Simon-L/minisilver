@@ -41,8 +41,9 @@ class PluginUI : public UI
 
     MiniSilverParameters params;
 
-    float local_plot[192000];
+    char buffer_size_str[6];
     bool showTweaks{false};
+    float local_plot[192000];
 
     // ----------------------------------------------------------------------------------------------------------------
 
@@ -91,7 +92,7 @@ class PluginUI : public UI
 
     void generateLogo();
     void showMenuBar();
-    void showTweaksWindow();
+    void showTweaksTab(float size_x, float size_y);
 
     /**
       ImGui specific onDisplay function.

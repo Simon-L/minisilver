@@ -100,7 +100,7 @@ struct AcidSynth
         vcf_env.process(-9.482, accent ? -2.223 : vcfDecTime, 3, 1, false); // atk, dec, atk shape, dec shape, gate
 
         float Vacc = wowFilter.processSample(accent ? vcf_env.output * 9.91 * (Accent * 0.15) : 0.0f);
-        float freq = vcf_env_freq(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
+        freq = vcf_env_freq(vcf_env.output, Vcutoff, Envmod, Vacc, A, B, C, D, E, (VaccMul * resToMul(Resonance)));
 
         if (freq >= (sampleRate * 4.0 * 0.495)) {
             d_stdout("!!!!! limit freq %f", freq);

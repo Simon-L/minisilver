@@ -57,20 +57,31 @@ void PluginUI::parameterChanged(uint32_t index, float value)
     repaint();
 }
 
-void PluginUI::showTweaksWindow() {
-    if (ImGui::CollapsingHeader("Tweaks", nullptr, ImGuiTreeNodeFlags_Leaf)) {
+void PluginUI::showTweaksTab(float size_x, float size_y) {
+    if (ImGui::BeginChild("Tweaks"), ImVec2(size_x, size_y), true) {
         PluginDSP* const dspPtr = (PluginDSP*)getPluginInstancePointer();
         if (dspPtr != NULL) {
             if (dspPtr->plotRepaint) {
                 std::memcpy(local_plot, dspPtr->plot, dspPtr->plotSize * sizeof(float));
                 dspPtr->plotRepaint = false;
             }
-            if (ImPlot::BeginPlot("My Plot")) {
-                ImPlot::PlotLine("My Line Plot", local_plot, dspPtr->plotSize);
+            if (ImPlot::BeginPlot("Frequency", ImVec2(size_x * 0.65, size_y * 0.5), ImPlotFlags_CanvasOnly|ImPlotFlags_NoFrame)) {
+                ImPlot::SetupAxisLimits(ImAxis_Y1, 0.0, 65000.0);
+                ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_AutoFit);
+                ImPlot::SetupAxisFormat(ImAxis_X1, "");
+                ImPlot::PlotLine("", local_plot, dspPtr->plotSize);
                 ImPlot::EndPlot();
+            }
+            ImGui::SameLine();
+            int buffer_size = dspPtr->plotSize;
+            std::sprintf(buffer_size_str, "%d", buffer_size);
+            if (ImGui::VSliderInt(buffer_size_str, ImVec2(15, size_y * 0.5), &buffer_size, 64, 80000)) {
+                dspPtr->plotSize = buffer_size;
+                dspPtr->plotIndex = 0;
             }
         }
     }
+    ImGui::EndChild();
 }
 
 void PluginUI::generateLogo() {
@@ -117,11 +128,10 @@ void PluginUI::showMenuBar()
         button_x -= ImGui::GetStyle().FramePadding.x * 5;
         button_x -= ImGui::CalcTextSize("About").x;
         button_x -= ImGui::GetStyle().ItemSpacing.x;
-        button_x -= ImGui::CalcTextSize("Tweaks").x;
+        button_x -= ImGui::CalcTextSize("Demo window").x;
         ImGui::SetCursorPosX(button_x);
-        if (ImGui::SmallButton("Tweaks")) {
-            showTweaks ^= true;
-            if (showTweaks) setHeight(DISTRHO_UI_DEFAULT_HEIGHT * 2);
+        if (ImGui::SmallButton("Demo window")) {
+            showDemo ^= true;
         }
         ImGui::PushStyleColor(ImGuiCol_Button, ImGui::IsPopupOpen("aboutpopup") ? Accent : ImGui::GetStyle().Colors[ImGuiCol_Button]);
         if (ImGui::SmallButton("About")) {
@@ -186,7 +196,7 @@ void PluginUI::onImGuiDisplay()
         accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kAccent], 0.0f, 1.0f, 100);
         accent_knob->setBg(pot_0_4_bg.c_str());
 
-        volume_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVolume], 0.0f, 1.0f, 100);
+        volume_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kVolume], 0.0f, 1.0f, 122);
         volume_knob->setBg(pot_0_4_bg.c_str());
 
         std::string pot_0_24 = svg_path + "/303Knob_0_24.svg";
@@ -302,19 +312,38 @@ void PluginUI::onImGuiDisplay()
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
-        ImGui::Spacing();
 
-        if (ImGuiKnobs::Knob("VOLUME", &params.values[kVolume], 0.0f, 1.0f, 0.005f, "%.4f", ImGuiKnobVariant_Stepped, 100, 0, 11)) {
+        ImVec2 tabs_size;
+        tabs_size.x = getWidth() - ImGui::GetStyle().FramePadding.x * 4 - 122;
+        tabs_size.y = getHeight() - ImGui::GetCursorPosY() - ImGui::GetStyle().FramePadding.y * 2.5;
+        if (ImGui::BeginChild("FX/Tweaks", tabs_size)) {
+            if (ImGui::BeginTabBar("FX/Tweaks"))
+            {
+                if (ImGui::BeginTabItem("FX"))
+                {
+                    ImGui::Text("This is the FX tab!\nblah blah blah blah blah");
+                    ImGui::EndTabItem();
+                }
+                if (ImGui::BeginTabItem("Tweaks"))
+                {
+                    showTweaksTab(tabs_size.x, tabs_size.y);
+                    ImGui::EndTabItem();
+                }
+                ImGui::EndTabBar();
+            }            
+        }
+        ImGui::EndChild();
+
+        ImGui::SameLine();
+
+        if (ImGuiKnobs::Knob("VOLUME", &params.values[kVolume], 0.0f, 1.0f, 0.005f, "%.4f", ImGuiKnobVariant_Stepped, 122, 0, 11)) {
             setParameterValue(kVolume, params.values[kVolume]);
         }
         volume_knob->paint();
         popCustomKnobsColors();
-        // ImGui::Checkbox("Show demo window", &showDemo);
-        // if (showDemo) ImGui::ShowDemoWindow(&showDemo);
 
-        if (showTweaks) {
-            showTweaksWindow();
-        }
+        if (showDemo) ImGui::ShowDemoWindow(&showDemo);
+
     }
     ImGui::PopFont();
     ImGui::End();

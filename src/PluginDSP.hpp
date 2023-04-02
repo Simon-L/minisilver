@@ -42,7 +42,7 @@ public:
     std::atomic<bool> plotRepaint{true};
     std::atomic<int> plotSize{20000};
     float plot[192000];
-    int plotIndex{0};
+    std::atomic<int> plotIndex{0};
 /**
 Plugin class constructor.@n
 You must set all parameter values to their defaults, matching ParameterRanges::def.

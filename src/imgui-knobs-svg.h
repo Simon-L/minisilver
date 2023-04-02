@@ -34,7 +34,7 @@ namespace ImGuiKnobsSVG {
 				break;
 			case ImGuiKnobVariant_Stepped:
 			case ImGuiKnobVariant_WiperDot:
-				image_height = image_width = (uint32_t)std::round(size * 0.6);
+				image_height = image_width = (uint32_t)std::round(size * 0.61);
 				break;
 			case ImGuiKnobVariant_Dot:
 			case ImGuiKnobVariant_Tick:
