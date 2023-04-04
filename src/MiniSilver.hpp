@@ -41,7 +41,7 @@ struct MiniSilverParameters
         Parameter(kParameterIsAutomatable, "Cutoff frequency", "cutoff_freq", "", 0.5f, 0.0, 1.0), // Cutoff
         Parameter(kParameterIsAutomatable, "Resonance", "resonance", "", 0.5f, 0.0, 1.0), // Resonance
         Parameter(kParameterIsAutomatable, "Env Mod", "env_mod", "", 0.5f, 0.0, 1.0), // EnvMod
-        Parameter(kParameterIsAutomatable, "Decay", "decay", "", -2.223f, -2.223, 1.223), // Decay
+        Parameter(kParameterIsAutomatable, "Decay", "decay", "", -2.0f, -2.0, 1.223), // Decay
         Parameter(kParameterIsAutomatable, "Accent", "accent", "", 0.5f, 0.0, 1.0), // Accent
         Parameter(kParameterIsAutomatable|kParameterIsBoolean, "Hold VCA", "hold_vca", "", 0.0f, 0.0, 1.0), // HoldVca
         Parameter(kParameterIsAutomatable|kParameterIsBoolean, "Waveform", "waveform", "", 0.0f, 0.0, 1.0), // Waveform

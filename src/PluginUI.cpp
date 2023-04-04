@@ -12,6 +12,8 @@ PluginUI::PluginUI()
       fResizeHandle(this)
 {
     ImPlot::CreateContext();
+    ImPlot::GetStyle().PlotPadding = ImVec2(0,0);
+    ImPlot::GetStyle().LabelPadding = ImVec2(0,0);
     setGeometryConstraints(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true);
 
     // hide handle if UI is resizable
@@ -42,6 +44,8 @@ PluginUI::PluginUI()
         d_stdout("UI %d -> %s (%s)", i, params.properties[i].name.buffer(), params.properties[i].symbol.buffer());
     }
 
+    PluginDSP* const dspPtr = (PluginDSP*)getPluginInstancePointer();
+    buffer_size = dspPtr->plotSize;
 }
 
 PluginUI::~PluginUI() {
@@ -61,23 +65,20 @@ void PluginUI::showTweaksTab(float size_x, float size_y) {
     if (ImGui::BeginChild("Tweaks"), ImVec2(size_x, size_y), true) {
         PluginDSP* const dspPtr = (PluginDSP*)getPluginInstancePointer();
         if (dspPtr != NULL) {
-            if (dspPtr->plotRepaint) {
-                std::memcpy(local_plot, dspPtr->plot, dspPtr->plotSize * sizeof(float));
-                dspPtr->plotRepaint = false;
-            }
-            if (ImPlot::BeginPlot("Frequency", ImVec2(size_x * 0.65, size_y * 0.5), ImPlotFlags_CanvasOnly|ImPlotFlags_NoFrame)) {
-                ImPlot::SetupAxisLimits(ImAxis_Y1, 0.0, 65000.0);
+            std::memcpy(local_plot, dspPtr->plot, dspPtr->plotSize * sizeof(float));
+            ImGui::SameLine();
+            if (ImPlot::BeginPlot("Frequency", ImVec2(size_x * 0.65, size_y * 0.5), ImPlotFlags_NoLegend | ImPlotFlags_NoMenus | ImPlotFlags_NoBoxSelect | ImPlotFlags_NoMouseText | ImPlotFlags_NoFrame)) {
                 ImPlot::SetupAxis(ImAxis_Y1, NULL, ImPlotAxisFlags_AutoFit);
-                ImPlot::SetupAxisFormat(ImAxis_X1, "");
-                ImPlot::PlotLine("", local_plot, dspPtr->plotSize);
+                ImPlot::SetupAxis(ImAxis_X1, NULL, ImPlotAxisFlags_AutoFit);
+                ImPlot::PlotLine("Frequency", local_plot, buffer_size);
                 ImPlot::EndPlot();
             }
-            ImGui::SameLine();
-            int buffer_size = dspPtr->plotSize;
-            std::sprintf(buffer_size_str, "%d", buffer_size);
-            if (ImGui::VSliderInt(buffer_size_str, ImVec2(15, size_y * 0.5), &buffer_size, 64, 80000)) {
-                dspPtr->plotSize = buffer_size;
-                dspPtr->plotIndex = 0;
+            if (ImGui::SliderInt("Buffer Size##bufferslider", &buffer_size, 64, 192000)) {
+                if (buffer_size != dspPtr->plotSize) {
+                    dspPtr->plotSize = buffer_size;
+                    dspPtr->plotIndex = 0;
+                    std::memset(local_plot, 0, dspPtr->plotSize * sizeof(float));
+                }
             }
         }
     }
@@ -191,7 +192,7 @@ void PluginUI::onImGuiDisplay()
         resonance_knob->setBg(pot_0_4_bg.c_str());
         envmod_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kEnvMod], 0.0f, 1.0f, 100);
         envmod_knob->setBg(pot_0_4_bg.c_str());
-        decay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kDecay], -2.223, 1.223, 100);
+        decay_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kDecay], -2.0, 1.223, 100);
         decay_knob->setBg(pot_0_4_bg.c_str());
         accent_knob = std::make_unique<ImGuiKnobsSVG::Knob>(pot_0_4.c_str(), ImGuiKnobVariant_Stepped, &params.values[kAccent], 0.0f, 1.0f, 100);
         accent_knob->setBg(pot_0_4_bg.c_str());
@@ -234,7 +235,7 @@ void PluginUI::onImGuiDisplay()
         envmod_knob->paint();
         ImGui::SameLine();
 
-        if (ImGuiKnobs::Knob("DECAY", &params.values[kDecay], -2.223, 1.223, 0.01f, setTimeDisplayValueString(vcfDecayDisplayString, params.values[kDecay]), ImGuiKnobVariant_Stepped, 100, 0, 11)) {
+        if (ImGuiKnobs::Knob("DECAY", &params.values[kDecay], -2.0, 1.223, 0.01f, setTimeDisplayValueString(vcfDecayDisplayString, params.values[kDecay]), ImGuiKnobVariant_Stepped, 100, 0, 11)) {
             setParameterValue(kDecay, params.values[kDecay]);
         }
         decay_knob->paint();
@@ -342,7 +343,10 @@ void PluginUI::onImGuiDisplay()
         volume_knob->paint();
         popCustomKnobsColors();
 
-        if (showDemo) ImGui::ShowDemoWindow(&showDemo);
+        if (showDemo) {
+            ImGui::ShowDemoWindow(&showDemo);
+            ImPlot::ShowDemoWindow(&showDemo);
+        }
 
     }
     ImGui::PopFont();

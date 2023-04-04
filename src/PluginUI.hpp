@@ -41,7 +41,8 @@ class PluginUI : public UI
 
     MiniSilverParameters params;
 
-    char buffer_size_str[6];
+    int buffer_size;
+    char buffer_size_str[20];
     bool showTweaks{false};
     float local_plot[192000];
 

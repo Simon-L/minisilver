@@ -39,7 +39,6 @@ class PluginDSP : public Plugin
     AcidSynth synth;
 
 public:
-    std::atomic<bool> plotRepaint{true};
     std::atomic<int> plotSize{20000};
     float plot[192000];
     std::atomic<int> plotIndex{0};

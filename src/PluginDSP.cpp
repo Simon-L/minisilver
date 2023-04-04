@@ -54,7 +54,6 @@ void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, cons
         plotIndex++;
         if (plotIndex >= plotSize) {
             plotIndex = 0;
-            plotRepaint = true;
         }
     }
 }
