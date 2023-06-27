@@ -29,7 +29,7 @@ PluginUI::PluginUI()
     if (getBundlePath() == nullptr || !std::strcmp(getPluginFormatName(), "CLAP")) {
         resources_path = std::string(getBinaryFilename());
         resources_path = resources_path.substr(0, resources_path.find_last_of("\\/"));
-        resources_path += "/minisilver_resources";
+        resources_path += "/eightohat_resources";
     } else {
         resources_path = std::string(getResourcePath(getBundlePath()));
     }

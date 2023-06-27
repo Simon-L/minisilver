@@ -1,9 +1,10 @@
 #include "DistrhoPlugin.hpp"
 #include "CParamSmooth.hpp"
 
-#include "MiniSilver.hpp"
+#include "eightohat.hpp"
 
 #include "303/AcidSynth.hpp"
+#include "808/HatSynth.hpp"
 
 #include <memory>
 
@@ -34,9 +35,10 @@ class PluginDSP : public Plugin
     double fSampleRate = getSampleRate();
     // std::unique_ptr<CParamSmooth> fSmoothGain = std::make_unique<CParamSmooth>(20.0f, fSampleRate);
 
-    MiniSilverParameters params;
+    eightohatParameters params;
 
     AcidSynth synth;
+    HatSynth hat1;
 
 public:
     std::atomic<int> plotSize{20000};

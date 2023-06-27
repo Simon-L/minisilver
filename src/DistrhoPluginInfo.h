@@ -1,10 +1,10 @@
-#define DISTRHO_PLUGIN_NAME "minisilver"
+#define DISTRHO_PLUGIN_NAME "eightohat"
 
 #define DISTRHO_PLUGIN_NUM_INPUTS 0
 
 #define DISTRHO_PLUGIN_NUM_OUTPUTS 2
 
-#define DISTRHO_PLUGIN_URI "urn:minisilver"
+#define DISTRHO_PLUGIN_URI "urn:eightohat"
 
 #define DISTRHO_PLUGIN_HAS_UI 1
 
@@ -52,4 +52,4 @@
 
 #define DISTRHO_PLUGIN_CLAP_FEATURES "audio-instrument", "synthesizer", "stereo"
 
-#define DISTRHO_PLUGIN_CLAP_ID "simonl.minisilver"
+#define DISTRHO_PLUGIN_CLAP_ID "simonl.eightohat"

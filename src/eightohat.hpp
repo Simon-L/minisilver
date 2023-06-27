@@ -34,7 +34,7 @@ static constexpr float envModLogBpY{0.1};
 static constexpr float envModLogMin{0.25};
 static constexpr float envModLogMax{0.887};
 
-struct MiniSilverParameters
+struct eightohatParameters
 {
     // Parameter(uint32_t h,const char * n,const char * s,const char * u,float def,float min,float max),
     Parameter properties[kParamCount] = {
@@ -53,7 +53,7 @@ struct MiniSilverParameters
     float values[kParamCount];
     int v_waveform;
 
-    MiniSilverParameters() {
+    eightohatParameters() {
         for (int i = 0; i < kParamCount; ++i)
         {
             values[i] = properties[i].ranges.def;

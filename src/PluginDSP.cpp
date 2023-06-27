@@ -21,6 +21,7 @@ void PluginDSP::activate()
 {
     // fSmoothGain->flush();
     synth.prepare(getSampleRate());
+    hat1.prepare(getSampleRate());
 
     synth.filter.OutputLPF.setCutoffFrequency(40000.0);
     synth.filter.OutputLPF.setQValue(1.0);
@@ -46,15 +47,15 @@ void PluginDSP::run(const float** inputs, float** outputs, uint32_t frames, cons
     // apply gain against all samples
     for (uint32_t i=0; i < frames; ++i)
     {   
-        float sy = synth.process();
-        outL[i] = sy * params.values[kVolume];
-        outR[i] = sy * params.values[kVolume];
+        float hat = hat1.process() * 0.5;
+        outL[i] = hat * params.values[kVolume];
+        outR[i] = hat * params.values[kVolume];
 
-        plot[plotIndex] = synth.freq;
-        plotIndex++;
-        if (plotIndex >= plotSize) {
-            plotIndex = 0;
-        }
+        // plot[plotIndex] = synth.freq;
+        // plotIndex++;
+        // if (plotIndex >= plotSize) {
+        //     plotIndex = 0;
+        // }
     }
 }
 

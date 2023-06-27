@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.7)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(NAME minisilver)
+set(NAME eightohat)
 project(${NAME})
 
 add_subdirectory(dpf)
@@ -40,7 +40,7 @@ target_include_directories(${NAME} PUBLIC chowdsp_wdf/include)
 target_include_directories(${NAME} PUBLIC sst-filters/include)
 target_include_directories(${NAME} PUBLIC chowdsp_utils/modules/common)
 
-target_compile_definitions(${NAME} PUBLIC IMGUI_USER_CONFIG="minisilver_imconfig.h")
+target_compile_definitions(${NAME} PUBLIC IMGUI_USER_CONFIG="eightohat_imconfig.h")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -60,10 +60,12 @@ target_link_libraries(${NAME} PUBLIC sst-filters)
 add_subdirectory(lunasvg)
 target_link_libraries(${NAME} PUBLIC lunasvg)
 
+set(THISISJUSTSOTOFORCECMAKETOCOPYFILES ON)
+
 add_custom_command(TARGET ${NAME} POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.lv2/resources
                    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.vst3/Contents/Resources
-                   COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${NAME}>/bin/minisilver_resources
+                   COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${NAME}>/bin/eightohat_resources
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.lv2/resources
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/${NAME}.vst3/Contents/Resources
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/minisilver_resources)
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res/ $<TARGET_FILE_DIR:${NAME}>/bin/eightohat_resources)

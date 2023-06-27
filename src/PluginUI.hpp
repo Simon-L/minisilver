@@ -39,7 +39,7 @@ class PluginUI : public UI
     char vcfDecayDisplayString[16];
     char vcaDecayDisplayString[16];
 
-    MiniSilverParameters params;
+    eightohatParameters params;
 
     int buffer_size;
     char buffer_size_str[20];

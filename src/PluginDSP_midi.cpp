@@ -29,6 +29,7 @@ void PluginDSP::handleMidi(const MidiEvent* event)
             }
             synth.setMidiNote(b1);
             synth.gateOn(accent);
+            hat1.gateOn(accent);
         } else {
             d_stdout("Gate ON Slide to %d, nextGateOff is %d", b1, b1);
             nextGateOff = b1;
@@ -40,6 +41,7 @@ void PluginDSP::handleMidi(const MidiEvent* event)
             d_stdout("Gate OFF (%d)", b1);
             nextGateOff = -1;
             synth.gateOff();
+            hat1.gateOff();
         } else {
             d_stdout("Ignored off for %d != %d", b1, nextGateOff);
         }
